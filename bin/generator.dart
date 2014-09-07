@@ -1,10 +1,7 @@
 import 'dart:io';
-import 'package:analyzer/analyzer.dart';
 import 'package:analyzer/formatter.dart';
-import 'package:path/path.dart' as path;
 import 'package:analyzer/src/services/formatter_impl.dart';
-import 'package:analyzer/src/generated/ast.dart';
-import '../lib/generator.dart';
+import 'package:js_mimicry/generator.dart';
 
 main(List<String> args) {/*
   if (args.length > 0) {
