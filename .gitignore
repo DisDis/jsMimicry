@@ -1,0 +1,8 @@
+.DS_Store
+packages
+.project
+pubspec.lock
+.settings
+.hg
+.hgignore
+.pub
