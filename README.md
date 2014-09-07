@@ -1,8 +1,9 @@
 JsMimicry
 ===========
 
-Allows the use of Dart classes and objects in javascript.
-Generates a special proxy classes.
+Allows the use of Dart classes and objects in javascript. Generates a special proxy classes.
+
+Create javascript API for Dart become easier. 
 
 Support:
 
@@ -27,7 +28,7 @@ Not support:
     /* imports */
     
     class Test1{
-      method1(p1,p2){/* code */}
+      method1(p1,[p2]){/* code */}
       method2(p1,p2){/* code */}
     }
     
@@ -35,7 +36,7 @@ Not support:
       int method2(p1,p2){/* new logic */}
       String method3(Test1 obj){/* code */}
       Future<int> method4(){/* code */}
-      Test1 method5(){/* code */}
+      Test1 method5({namedP1, namedP2}){/* code */}
     }
 
 ##Add annotation for class
@@ -91,7 +92,7 @@ Include entry_point.dart.proxy.dart in import.
     import 'entry_point.dart.proxy.dart'
     
     class Test1{
-      method1(p1,p2){/* code */}
+      method1(p1,[p2]){/* code */}
       method2(p1,p2){/* code */}
     }
     
@@ -102,7 +103,7 @@ Include entry_point.dart.proxy.dart in import.
       @jsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
       Future<int> method4(){/* code */}
       @jsMutator(result:Test1Proxy.toJS)
-      Test1 method5(){/* code */}
+      Test1 method5({namedP1, namedP2}){/* code */}
       
       static futureToCallbacks(Future result,js.JsFunction resultCb,[js.JsFunction errorCb]){
         if (errorCb!=null){
@@ -111,12 +112,26 @@ Include entry_point.dart.proxy.dart in import.
         result.then((o)=>resultCb.apply([o]));
         return result;
       }
-      
-      
     }
-Profit
+    
+### Import to javascript
+    import 'dart:js' as js;
+    main(){
+      // Export Test2 class to JS
+      Test2Proxy.jsRegistrationPrototype();
+      // Create instance Test1
+      js.context["dartInstanceTest1"] = Test1Proxy.toJS(new Test1()); 
+    }
+### Uses in javascript
+    // Create Test2 instance, call method5 with named parameters
+    new Test2().method5({namedP1:"123"});
+    // call Test1.method1 with optional parameters
+    dartInstanceTest1.method1("1");
 
 ## Proxy methods
- JsObject Test2Proxy.toJS(Test2 obj) - Create proxy object for Test2 object.
- Test2Proxy.jsRegistrationPrototype() - Creates a special a new functions on the side javascript.
- Test2 Test2Proxy.toDart(JsObject obj) - Convert javascript proxy to real Dart object.
+###JsObject toJS(<i>DartClass</i> obj)
+Create proxy object for Test2 object.
+###jsRegistrationPrototype()
+Creates a special a new functions on the side javascript.
+###<i>DartClass</i> toDart(JsObject obj)
+Convert javascript proxy to real Dart object.
