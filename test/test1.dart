@@ -1,6 +1,6 @@
 library test;
 import 'dart:js' as js;
-import 'package:jsmimicry/annotation.dart';
+import 'package:js_mimicry/annotation.dart';
 import 'dart:async';
 import 'index.dart.proxy.dart';
 

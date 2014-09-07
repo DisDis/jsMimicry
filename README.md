@@ -87,6 +87,7 @@ Include entry_point.dart.proxy.dart in import.
 
 ## Result sample code:
     // entry_point.dart
+    import 'package:js_mimicry/annotation.dart';
     import 'entry_point.dart.proxy.dart'
     
     class Test1{
