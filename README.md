@@ -7,7 +7,7 @@ Create javascript API for Dart become easier.
 
 Support:
 
- * Class inheritance
+ * Class inheritance ( with @JsProxy )
  * Named constructors
  * Method
  * Optional positional parameters
@@ -15,12 +15,12 @@ Support:
  * Input parameter transform
  * Result mutation
  * Future (via result mutator)
+ * Field
+ * Getter/Setter
  
 Not support:
 
  * Factory
- * Field
- * Getter/Setter
  * Operator
 
 ##Dart code (sample 'entry_point.dart'):
@@ -46,10 +46,10 @@ Not support:
     }
     
 ##Add annotation for transform input parameter
-    String method3(@jsTransform(Test1Proxy.toDart) Test1 obj){/* code */}
+    String method3(@JsTransform(Test1Proxy.toDart) Test1 obj){/* code */}
     
 ##Add annotation for mutation result Future
-    @jsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
+    @JsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
     Future<int> method4(){/* code */}
     
     static futureToCallbacks(Future result,js.JsFunction resultCb,[js.JsFunction errorCb]){
@@ -61,7 +61,7 @@ Not support:
     }
 
 ##Add annotation for mutation result instance object
-    @jsMutator(result:Test1Proxy.toJS)
+    @JsMutator(result:Test1Proxy.toJS)
     Test1 method5(){/* code */}
 
 ##Create generator Js Proxy for your entry point dart file
@@ -99,10 +99,10 @@ Include entry_point.dart.proxy.dart in import.
     @JsProxy()
     class Test2 extends Test1{
       int method2(p1,p2){/* new logic */}
-      String method3(@jsTransform(Test1Proxy.toDart) Test1 obj)
-      @jsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
+      String method3(@JsTransform(Test1Proxy.toDart) Test1 obj)
+      @JsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
       Future<int> method4(){/* code */}
-      @jsMutator(result:Test1Proxy.toJS)
+      @JsMutator(result:Test1Proxy.toJS)
       Test1 method5({namedP1, namedP2}){/* code */}
       
       static futureToCallbacks(Future result,js.JsFunction resultCb,[js.JsFunction errorCb]){

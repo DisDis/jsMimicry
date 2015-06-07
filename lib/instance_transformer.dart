@@ -1,9 +1,3 @@
-// Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
-/// Code transform for @observable. The core transformation is relatively
-/// straightforward, and essentially like an editor refactoring.
 library js_mimicry.transformer.jsInstance;
 
 import 'dart:async';
@@ -18,7 +12,6 @@ import 'package:js_mimicry/generator.dart';
 
 class JsInstanceTransformer extends Transformer {
   final bool releaseMode;
-  //final bool injectBuildLogsInOutput;
   final List<String> _files;
   JsInstanceTransformer(
       {List<String> files, bool releaseMode, bool injectBuildLogsInOutput})
@@ -27,8 +20,7 @@ class JsInstanceTransformer extends Transformer {
   JsInstanceTransformer.asPlugin(BarbackSettings settings)
       : _files = _readFiles(settings.configuration['files']),
         releaseMode = settings.mode ==
-            BarbackMode.RELEASE
-  ;
+            BarbackMode.RELEASE;
 
   static List<String> _readFiles(value) {
     if (value == null) return null;
