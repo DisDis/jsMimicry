@@ -1,14 +1,12 @@
-import 'test1.dart';
-import 'index.dart.proxy.dart';
+import 'package:js_mimicry/test/test1.dart';
+import 'package:js_mimicry/test/test11.dart';
 import 'dart:js' as js;
+import 'package:js_mimicry/annotation.dart';
 
 main(){
   print("Run");
   js.context["dart"] = new js.JsObject.jsify({});
-  Test2Proxy.jsRegistrationPrototype();
-  TestMimicry1Proxy.jsRegistrationPrototype();
   js.context["test1"] = new js.JsFunction.withThis((that){
-    return Test2Proxy.toJS(new Test2()); 
+    return  JsProxyFactory.toJS[Test2](new Test2());
   });
-  Test5Proxy.jsRegistrationPrototype();
 }

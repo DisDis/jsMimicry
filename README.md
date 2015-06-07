@@ -40,7 +40,7 @@ Not support:
     }
 
 ##Add annotation for class
-    @jsProxy()
+    @JsProxy()
     class Test2 extends Test1{
     // ... cut ...
     }
@@ -96,7 +96,7 @@ Include entry_point.dart.proxy.dart in import.
       method2(p1,p2){/* code */}
     }
     
-    @jsProxy()
+    @JsProxy()
     class Test2 extends Test1{
       int method2(p1,p2){/* new logic */}
       String method3(@jsTransform(Test1Proxy.toDart) Test1 obj)

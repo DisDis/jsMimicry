@@ -1,21 +1,13 @@
 part of jsMimicry.generator;
 
 class GeneratorJsMimicry {
-  final File entryPoint;
-  Set<String> pass1Job = new Set();
-  Set<String> pass2Job = new Set();
-  List<String> jobs = [];
   Map<String, String> superClassByClass = {};
-  Map<String, String> filenameByClass = {};
-  Set<String> proxyGenClassList = new Set();
   Map<String, DartClassInfo> classInfo = {};
-  Map<String, String> libraryFilenameByFilename = {};
-  GeneratorJsMimicry(File this.entryPoint) {
-    var absPath = path.absolute(entryPoint.path);
-    jobs.add(absPath);
-    _phase1();
-    _phase2();
+  Map<AssetId, String> _importPrefix = {};
+  static const String NAME_jsProxyBootstrap = "jsProxyBootstrap";
+  GeneratorJsMimicry() {}
 
+  _superClassLink() {
     classInfo.forEach((className, info) {
       if (info.superClazz != null) {
         var parenClassInfo = classInfo[info.superClazz.dartClassName];
@@ -26,72 +18,80 @@ class GeneratorJsMimicry {
     });
   }
 
-  generateProxyFile(StringBuffer sb, String outputFileName) {
-    outputFileName = path.normalize(path.absolute(path.dirname(outputFileName)));
+  String _assetIdToImport(AssetId id) {
+    //js_test|lib/test1.dart
+    if (id.path.startsWith('lib/')) {
+      return 'package:${id.package}/${id.path.substring(4)}';
+    }
+    return id.path.substring(id.path.indexOf("/") + 1);
+  }
+
+  generateProxyFile(StringBuffer sb /*, String outputFileName*/) {
+    _superClassLink();
+
+    //  outputFileName = path.normalize(path.absolute(path.dirname(outputFileName)));
     sb.writeln("library jsProxy;");
     sb.writeln(r"/* AUTO-GENERATED FILE.  DO NOT MODIFY.*/");
     sb.writeln("");
     sb.writeln("import 'dart:js' as js;");
+    sb.writeln(
+        "import 'package:js_mimicry/annotation.dart' as ${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX};");
     sb.writeln("");
-    Set<String> files = new Set();
-    proxyGenClassList.forEach((v) {
-      var tmp = filenameByClass[v];
-      if (tmp == null){
-        print("Skip '$v'");
-        return;
-      }
-      var filePath = path.relative(libraryFilenameByFilename[tmp], from: outputFileName);
-      files.add(filePath);
+    _importPrefix.forEach((importAssetId, importPrefix) {
+      sb.writeln(
+          "import '${_assetIdToImport(importAssetId)}' as ${importPrefix};");
     });
-    files.forEach((filePath) {
-      sb.writeln("import '$filePath';");
+
+    sb.writeln("");
+    sb.writeln("//--------------------------");
+    sb.writeln("//  ${NAME_jsProxyBootstrap}");
+    sb.writeln("//--------------------------");
+    sb.writeln("void ${NAME_jsProxyBootstrap}(){");
+    classInfo.forEach((k, v) {
+      sb.writeln(
+          "${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyFactory_CLASS}.registrationPrototype.add(${v.clazz.dartProxyClass}.${DartClassInfo.NAME_REG_PROTOTYPE_METHOD});");
+      sb.writeln(
+          "${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyFactory_CLASS}.toJS[${v.clazz.importDartClassName}] = ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_TO_JS_METHOD};");
+      sb.writeln(
+          "${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyFactory_CLASS}.toDart[${v.clazz.importDartClassName}] = ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_TO_DART_METHOD};");
     });
+    sb.writeln("}");
+
+    sb.writeln("dynamic _toDart(value){");
+    sb.writeln("""
+    if (value != null && (value is js.JsObject) && value['${DartClassInfo.DART_OBJ_KEY}']!=null){
+     return value['${DartClassInfo.DART_OBJ_KEY}'];
+    }
+    return value;
+    """);
+    sb.writeln("}");
+
+    sb.writeln("dynamic _toJs(value){");
+    sb.writeln("""
+    if (value is ${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyContainer_KEY}){
+      return value.${DartClassInfo.JS_INSTANCE_PROXY};
+    }
+    return value;
+    """);
+    sb.writeln("}");
+
+    sb.writeln("");
     classInfo.forEach((k, v) {
       sb.writeln("");
       sb.writeln("//--------------------------");
-      sb.writeln("//   ${v.clazz.dartClassName} -> ${v.clazz.jsPath}");
+      sb.writeln("//   ${v.clazz.importDartClassName} -> ${v.clazz.jsPath}");
       sb.writeln("//--------------------------");
       v.generateProxyClass(sb);
     });
   }
 
-  void _phase2() {
-    pass1Job.clear();
+  int _importPrefixIndex = 0;
 
-    proxyGenClassList.toList().forEach((className) {
-      String parent;
-      while ((parent = superClassByClass[className]) != null) {
-        proxyGenClassList.add(parent);
-        var tmp = filenameByClass[parent];
-        if (tmp!=null){
-          pass2Job.add(tmp);
-        }
-        className = parent;
-      }
-    });
-    jobs.addAll(pass2Job);
-    pass2Job.clear();
-    while (jobs.length > 0) {
-      var target = jobs.removeAt(0);
-      if (pass2Job.contains(target) || !new File(target).existsSync()) {
-        continue;
-      }
-      var ast = parseDartFile(target);
-      ast.accept(new ProxyCollectorVisitor(this));
-    }
-  }
-
-  void _phase1() {
-    while (jobs.length > 0) {
-      var target = jobs.removeAt(0);
-      if (pass1Job.contains(target) || !new File(target).existsSync()) {
-        continue;
-      }
-      pass1Job.add(target);
-      print("Parsing '$target'");
-      var ast = parseDartFile(target);
-      var collector = new CollectorVisitor(this, target);
-      ast.accept(collector);
-    }
+  void phase1(ClassDeclaration node, AssetId assetId) {
+    //uri = 'asset:js_mimicry/test/test1.dart'
+    String classPrefix =
+        _importPrefix.putIfAbsent(assetId, () => "I${_importPrefixIndex++}_");
+    var collector = new CollectorVisitor(this, classPrefix);
+    node.accept(collector);
   }
 }

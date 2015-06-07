@@ -1,6 +1,6 @@
 part of test;
 
-@jsProxy()
+@JsProxy()
 class TestMimicry1 {
   
   var state1 = 0;
@@ -47,7 +47,7 @@ class TestMimicry1 {
     return result;
   }
   
-  @jsMutator(insertParams:const ["resultCb","errorCb"],result:TestMimicry1.futureToCallbacks)
+  @JsMutator(insertParams:const ["resultCb","errorCb"],result:TestMimicry1.futureToCallbacks)
   Future<int> methodLongWork1(int p1){
     Completer<int> c = new Completer();
     print("TestMimicry1.methodLongWork1 - start");
@@ -58,7 +58,7 @@ class TestMimicry1 {
     return c.future;
   }
   
-  @jsMutator(insertParams:const ["resultCb","errorCb"],result:TestMimicry1.futureToCallbacks)
+  @JsMutator(insertParams:const ["resultCb","errorCb"],result:TestMimicry1.futureToCallbacks)
   Future<int> methodLongWork2(int p1){
       Completer<int> c = new Completer();
       print("TestMimicry1.methodLongWork2 - start");
@@ -70,9 +70,10 @@ class TestMimicry1 {
     }
   
   String methodInputDartObject1(
-                             @jsTransform(Test1Proxy.toDart)
+                             //@JsTransform(JsProxyFactory.toDart[Test1])
                              Test1 t1, 
-                             @jsTransform(Test2Proxy.toDart) Test2 t2, int intP, String strP){
+                             //@JsTransform(JsProxyFactory.toDart[Test2])
+                             Test2 t2, int intP, String strP){
       return t1.method2(intP.toString(), strP).toString() + t2.method2(intP.toString(), strP).toString();    
   }
 }

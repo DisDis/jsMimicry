@@ -15,6 +15,7 @@
          
          window.onload = function () {
     var o1 = new TestMimicry1();
+             console.log('o1.JS_INSTANCE_PROXY == o1',o1.JS_INSTANCE_PROXY == o1);
     	o1.methodWithoutParams();
         o1.method1(1);
         o1.method2(2);
@@ -25,8 +26,9 @@
         o1.method4(4,{p3:"3"});
         o1.method4(4,{p2:2});
         o1.method4(4,{p2:22,p3:"33"});
-        o1.methodLongWork1(okResult,errorResult,1);
-        o1.methodLongWork2(okResult,errorResult,2);
+        //o1.methodLongWork1(okResult,errorResult,1);
+        //o1.methodLongWork2(okResult,errorResult,2);
+
         
         // See dart code
         // o2 = new dart.T1()
@@ -41,6 +43,18 @@
         console.log(o1.methodInputDartObject1(t1,o2,3,"4"));
         var oTest5 = new Test5_namedCtr3(o2);
         oTest5.methodTest5(123);
+
+             var o3 = new dart.T22();
+             console.log('o3.t2Field == o3.methodtt2Field()', o3.t2Field == o3.methodtt2Field());
+             o3.t2Field = "1";
+             console.log('o3.t2Field == o3.methodtt2Field()', o3.t2Field == o3.methodtt2Field());
+             console.log('o3.fieldTest1.name == null', o3.fieldTest1.name == null);
+             o3.fieldTest1.name = "2";
+             console.log('o3.fieldTest1.name == o3.fieldTest1.getName()', o3.fieldTest1.name == o3.fieldTest1.getName());
+             var o3f1 = o3.fieldTest1;
+             o3.fieldTest1 = new dart.T11();
+             console.log('o3.fieldTest1 != o3f1', o3.fieldTest1 != o3f1);
+             console.log('o3.fieldTest1.name != o3f1.name', o3.fieldTest1.name != o3f1.name);
   }
     </script>
   </head>
