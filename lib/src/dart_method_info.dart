@@ -68,7 +68,6 @@ class DartMethodInfo {
     if (parameters.length > 0) {
       _generateParams(sbParamsWithType, sbParams);
     }
-    String dartClassName = clazz.dartClassName;
     String postFixName = name == null ? '' : '_$name';
     sb.writeln(
         """context[r"${nameFunction}${postFixName}"] = new js.JsFunction.withThis((that$sbParamsWithType) {""");
@@ -88,22 +87,14 @@ class DartMethodInfo {
     sb.writeln(
         """proto[r'${name}'] = new js.JsFunction.withThis((that$sbParamsWithType) {""");
     _generateParamTransforms(sb);
-    sb.write("""return _toJs(""");
     var methodCall =
         """((that["${DartClassInfo.DART_OBJ_KEY}"] as ${clazz.importDartClassName}).${name}($sbParams))""";
     if (mutator != null) {
       methodCall = mutator.changeResult(methodCall);
     }
-    sb.write(methodCall);
-    sb.write(');');//end return
+    sb.write("""return _toJs($methodCall);""");//end return
     sb.writeln("});");
   }
-
-//  void _convertParamsToDart(StringBuffer sb){
-//    parameters.forEach((param) {
-//      sb.writeln(
-//    });
-//  }
 
   void _generateParamTransforms(StringBuffer sb) {
     parameters.forEach((param) {

@@ -61,7 +61,7 @@ Not support:
     }
 
 ##Add annotation for mutation result instance object
-    @JsMutator(result:Test1Proxy.toJS)
+    @JsMutator(result:Test1Proxy.toJs)
     Test1 method5(){/* code */}
 
 ##Create generator Js Proxy for your entry point dart file
@@ -102,7 +102,7 @@ Include entry_point.dart.proxy.dart in import.
       String method3(@JsTransform(Test1Proxy.toDart) Test1 obj)
       @JsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
       Future<int> method4(){/* code */}
-      @JsMutator(result:Test1Proxy.toJS)
+      @JsMutator(result:Test1Proxy.toJs)
       Test1 method5({namedP1, namedP2}){/* code */}
       
       static futureToCallbacks(Future result,js.JsFunction resultCb,[js.JsFunction errorCb]){
@@ -120,7 +120,7 @@ Include entry_point.dart.proxy.dart in import.
       // Export Test2 class to JS
       Test2Proxy.jsRegistrationPrototype();
       // Create instance Test1
-      js.context["dartInstanceTest1"] = Test1Proxy.toJS(new Test1()); 
+      js.context["dartInstanceTest1"] = Test1Proxy.toJs(new Test1()); 
     }
 ### Uses in javascript
     // Create Test2 instance, call method5 with named parameters
@@ -129,7 +129,7 @@ Include entry_point.dart.proxy.dart in import.
     dartInstanceTest1.method1("1");
 
 ## Proxy methods
-###JsObject toJS(<i>DartClass</i> obj)
+###JsObject toJs(<i>DartClass</i> obj)
 Create proxy object for Test2 object.
 ###jsRegistrationPrototype()
 Creates a special a new functions on the side javascript.

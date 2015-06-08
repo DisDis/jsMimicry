@@ -24,7 +24,7 @@ class DartClassInfo {
   static const String ANNOTATION_PARAMETER = "JsTransform";
 
   static const String NAME_REG_PROTOTYPE_METHOD = "jsRegistrationPrototype";
-  static const String NAME_TO_JS_METHOD = "toJS";
+  static const String NAME_TO_JS_METHOD = "toJs";
   static const String NAME_TO_DART_METHOD = "toDart";
   static const String NAME_PROTOTYPE_FLAG = "__prototypeReg";
   static const String DART_OBJ_KEY = "_dartObj";
@@ -130,7 +130,7 @@ context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFuncti
     methods.forEach((v) {
       v.getMethodCode(sb, clazz);
     });
-    sb.writeln("""// Constructor for method toJS""");
+    sb.writeln("""// Constructor for method toJs""");
     sb.writeln(
         """context[r"${nameFunction}_int"] = new js.JsFunction.withThis((that, obj) {
       //print(r"ctr:${clazz.jsPath}_int");
@@ -197,16 +197,6 @@ context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFuncti
     generateJsRegistrationPrototype(sb);
     var astF = parseCompilationUnit(sb.toString());
     FunctionDeclaration fd = astF.declarations[0];
-    var astClone = new AstCloner();
-    return astClone.cloneNode(fd.functionExpression.body);
-  }
-
-  FunctionBody toJSBody(BlockFunctionBody oldBody) {
-    StringBuffer sb = new StringBuffer();
-    generateToJS(sb);
-    var astF = parseCompilationUnit(sb.toString());
-    FunctionDeclaration fd = astF.declarations[0];
-
     var astClone = new AstCloner();
     return astClone.cloneNode(fd.functionExpression.body);
   }

@@ -58,8 +58,8 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
       return false;
     }
     if (!transaction.hasEdits) {
-      var str = ' ${GeneratorJsMimicry.NAME_jsProxyBootstrap}(); ${DartClassInfo.JsProxyFactory_CLASS}.init(); ';
-      transaction.edit(mainDeclaration.end-1,mainDeclaration.end-1,str);
+      transaction.edit(mainDeclaration.functionExpression.body.offset+1,mainDeclaration.functionExpression.body.offset+1,' ${GeneratorJsMimicry.NAME_jsProxyBootstrap}(); ');
+      transaction.edit(mainDeclaration.end-1,mainDeclaration.end-1,' ${DartClassInfo.JsProxyFactory_CLASS}.init(); ');
     }
 
 

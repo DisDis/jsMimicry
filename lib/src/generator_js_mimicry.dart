@@ -49,11 +49,9 @@ class GeneratorJsMimicry {
     sb.writeln("void ${NAME_jsProxyBootstrap}(){");
     classInfo.forEach((k, v) {
       sb.writeln(
-          "${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyFactory_CLASS}.registrationPrototype.add(${v.clazz.dartProxyClass}.${DartClassInfo.NAME_REG_PROTOTYPE_METHOD});");
-      sb.writeln(
-          "${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyFactory_CLASS}.toJS[${v.clazz.importDartClassName}] = ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_TO_JS_METHOD};");
-      sb.writeln(
-          "${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyFactory_CLASS}.toDart[${v.clazz.importDartClassName}] = ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_TO_DART_METHOD};");
+          """${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyFactory_CLASS}.registration(
+              ${v.clazz.importDartClassName}, ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_REG_PROTOTYPE_METHOD},
+                 ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_TO_JS_METHOD}, ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_TO_DART_METHOD});""");
     });
     sb.writeln("}");
 

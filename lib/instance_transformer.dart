@@ -119,11 +119,12 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
     dynamic _${DartClassInfo.JS_INSTANCE_PROXY};
     dynamic get ${DartClassInfo.JS_INSTANCE_PROXY}{
        if (_${DartClassInfo.JS_INSTANCE_PROXY} == null){
-         _${DartClassInfo.JS_INSTANCE_PROXY} = ${DartClassInfo.JsProxyFactory_CLASS}.toJS[${_getSimpleIdentifier(cls.name)}](this);
+         _${DartClassInfo.JS_INSTANCE_PROXY} = ${DartClassInfo.JsProxyFactory_CLASS}.toJs(this); //${_getSimpleIdentifier(cls.name)}
        }
        return _${DartClassInfo.JS_INSTANCE_PROXY};
     }
     set ${DartClassInfo.JS_INSTANCE_PROXY}(v)=>_${DartClassInfo.JS_INSTANCE_PROXY} = v;
+    bool get hasJsInstance => _${DartClassInfo.JS_INSTANCE_PROXY}!=null;
     detachJsInstance(){
       if (_${DartClassInfo.JS_INSTANCE_PROXY}!=null){
         _${DartClassInfo.JS_INSTANCE_PROXY}["${DartClassInfo.DART_OBJ_KEY}"] = null;

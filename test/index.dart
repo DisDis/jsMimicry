@@ -7,6 +7,6 @@ main(){
   print("Run");
   js.context["dart"] = new js.JsObject.jsify({});
   js.context["test1"] = new js.JsFunction.withThis((that){
-    return  JsProxyFactory.toJS[Test2](new Test2());
+    return  JsProxyFactory.toJs(new Test2());
   });
 }
