@@ -23,10 +23,30 @@ Not support:
  * Factory
  * Operator
 
-##Dart code (sample 'entry_point.dart'):
-    // entry_point.dart
-    /* imports */
-    
+
+Try It Now
+-----------
+Add the js_mimicry package to your pubspec.yaml file:
+
+```yaml
+dependencies:
+  js_mimicry: ">=0.2.0 <0.3.0"
+```
+
+Building and Deploying
+----------------------
+
+To build a deployable version of your app, add the js_mimicry transformers to your
+pubspec.yaml file:
+
+```yaml
+transformers:
+- js_mimicry
+```
+
+Sample
+-----------
+##Dart code
     class Test1{
       method1(p1,[p2]){/* code */}
       method2(p1,p2){/* code */}
@@ -37,16 +57,27 @@ Not support:
       String method3(Test1 obj){/* code */}
       Future<int> method4(){/* code */}
       Test1 method5({namedP1, namedP2}){/* code */}
+      String method6(int value){/* code */}
     }
 
 ##Add annotation for class
     @JsProxy()
-    class Test2 extends Test1{
-    // ... cut ...
+    class Test1{  // ... cut ...
+    }
+
+    @JsProxy()
+    class Test2 extends Test1{ // ... cut ...
     }
     
 ##Add annotation for transform input parameter
-    String method3(@JsTransform(Test1Proxy.toDart) Test1 obj){/* code */}
+    String method6(@JsTransform(ANY_TO_INT) int value){/* code */}
+
+    static int ANY_TO_INT(Object v){
+        if (v is String){
+         return int.parse(v);
+        }
+        return v as int;
+    }
     
 ##Add annotation for mutation result Future
     @JsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
@@ -60,59 +91,11 @@ Not support:
         return result;
     }
 
-##Add annotation for mutation result instance object
-    @JsMutator(result:Test1Proxy.toJs)
+##Add annotation for mutation result
+    @JsMutator(result:ANY_TO_STRING)
     Test1 method5(){/* code */}
 
-##Create generator Js Proxy for your entry point dart file
-    //Create dart file in bin folder
-    import 'dart:io';
-    import 'package:analyzer/formatter.dart';
-    import 'package:analyzer/src/services/formatter_impl.dart';
-    import 'package:js_mimicry/generator.dart';
-    
-    main(List<String> args) {
-        var fileName = "entry_point.dart";
-        var gen = new GeneratorJsMimicry(new File(fileName));
-        StringBuffer sb = new StringBuffer();
-        gen.generateProxyFile(sb,fileName);
-        CodeFormatter cf = new CodeFormatter();
-        new File(fileName + ".proxy.dart").writeAsStringSync(
-          cf.format(CodeKind.COMPILATION_UNIT,
-          sb.toString()
-          ).source
-          , mode: FileMode.WRITE);
-    }
-Output: entry_point.dart.proxy.dart
-Include entry_point.dart.proxy.dart in import.
-
-## Result sample code:
-    // entry_point.dart
-    import 'package:js_mimicry/annotation.dart';
-    import 'entry_point.dart.proxy.dart'
-    
-    class Test1{
-      method1(p1,[p2]){/* code */}
-      method2(p1,p2){/* code */}
-    }
-    
-    @JsProxy()
-    class Test2 extends Test1{
-      int method2(p1,p2){/* new logic */}
-      String method3(@JsTransform(Test1Proxy.toDart) Test1 obj)
-      @JsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
-      Future<int> method4(){/* code */}
-      @JsMutator(result:Test1Proxy.toJs)
-      Test1 method5({namedP1, namedP2}){/* code */}
-      
-      static futureToCallbacks(Future result,js.JsFunction resultCb,[js.JsFunction errorCb]){
-        if (errorCb!=null){
-            result = result.catchError((err)=>errorCb.apply([err]));
-        }
-        result.then((o)=>resultCb.apply([o]));
-        return result;
-      }
-    }
+    static ANY_TO_STRING(v)=>v.toString();
     
 ### Import to javascript
     import 'dart:js' as js;
@@ -120,7 +103,7 @@ Include entry_point.dart.proxy.dart in import.
       // Export Test2 class to JS
       Test2Proxy.jsRegistrationPrototype();
       // Create instance Test1
-      js.context["dartInstanceTest1"] = Test1Proxy.toJs(new Test1()); 
+      js.context["dartInstanceTest1"] = JsProxyFactory.toJs((new Test1());
     }
 ### Uses in javascript
     // Create Test2 instance, call method5 with named parameters
@@ -128,10 +111,8 @@ Include entry_point.dart.proxy.dart in import.
     // call Test1.method1 with optional parameters
     dartInstanceTest1.method1("1");
 
-## Proxy methods
-###JsObject toJs(<i>DartClass</i> obj)
+## JsProxyFactory methods
+###<i>JsObject</i> toJs(<i>DartClass</i> obj)
 Create proxy object for Test2 object.
-###jsRegistrationPrototype()
-Creates a special a new functions on the side javascript.
-###<i>DartClass</i> toDart(JsObject obj)
+###<i>DartClass</i> toDart(Type dartType, JsObject obj)
 Convert javascript proxy to real Dart object.

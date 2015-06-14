@@ -46,7 +46,7 @@ abstract class JsProxyFactory{
   }
   static dynamic toDart(Type dartType, Object obj){
     if (obj == null) { return null; }
-    return _toDart[obj.runtimeType](obj);
+    return _toDart[dartType](obj);
   }
 
   static final List<Function> _registrationPrototype = [];
