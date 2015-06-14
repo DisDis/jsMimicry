@@ -73,7 +73,27 @@ class TestMimicry1 {
                              //@JsTransform(JsProxyFactory.toDart[Test1])
                              Test1 t1, 
                              //@JsTransform(JsProxyFactory.toDart[Test2])
-                             Test2 t2, int intP, String strP){
-      return t1.method2(intP.toString(), strP).toString() + t2.method2(intP.toString(), strP).toString();    
+                             Test2 t2,@JsTransform(ANY_TO_INT1) int intP, String strP){
+      return t1.method2(intP.toString(), strP).toString() + t2.method2(intP.toString(), strP).toString();
   }
+  String m1(@JsTransform(TestMimicry1.ANY_TO_INT1) int intP){
+    return "+++ $intP +++";
+  }
+
+
+  String m2(@JsTransform(ANY_TO_INTGlobal1) int intP){
+    return "+++ $intP +++";
+  }
+  static int ANY_TO_INT1(Object v){
+    if (v is String){
+      return int.parse(v);
+    }
+    return v as int;
+  }
+}
+int ANY_TO_INTGlobal1(Object v){
+if (v is String){
+return int.parse(v);
+}
+return v as int;
 }

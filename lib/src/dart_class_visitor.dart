@@ -2,7 +2,8 @@ part of jsMimicry.generator;
 
 class DartClassVisitor extends GeneralizingAstVisitor {
   final DartClassInfo jsProxyInfo;
-  DartClassVisitor(DartClassInfo this.jsProxyInfo) {}
+  final GeneratorJsMimicry generator;
+  DartClassVisitor(DartClassInfo this.jsProxyInfo, this.generator) {}
 
   DartMethodMutator _getMutator(Annotation annotation) {
     DartMethodMutator dmm = new DartMethodMutator();
@@ -18,7 +19,7 @@ class DartClassVisitor extends GeneralizingAstVisitor {
               list.map((v) => v.value.toString()).toList(growable: false);
         }
         if (argN.name.label.toString() == "result") {
-          dmm.resultMutator = argN.expression.toString();
+          dmm.resultMutator = generator.getMethodMetadata(argN.expression as Identifier);
         }
       });
     }

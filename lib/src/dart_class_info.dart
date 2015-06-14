@@ -4,9 +4,9 @@ class JsClass {
   String jsPath;
   String className;
   String dartClassName;
-  String importPrefix;
+  DartLibraryMetadata library;
   String get importDartClassName =>
-      "${importPrefix!=null?importPrefix+'.':''}${dartClassName}";
+      "${library.importPrefix!=null?library.importPrefix+'.':''}${dartClassName}";
   String get dartProxyClass => "${dartClassName}Proxy";
 }
 
@@ -28,14 +28,15 @@ class DartClassInfo {
   static const String NAME_TO_DART_METHOD = "toDart";
   static const String NAME_PROTOTYPE_FLAG = "__prototypeReg";
   static const String DART_OBJ_KEY = "_dartObj";
-  static const String JsProxyContainer_KEY = 'JsProxyContainer';
+  static const String NAME_JS_PROXY_INTERFACE = 'JsProxyContainer';
   static const String JS_INSTANCE_PROXY = 'JS_INSTANCE_PROXY';
-  static const String JsProxyFactory_CLASS = 'JsProxyFactory';
+  static const String NAME_PROXY_FACTORY = 'JsProxyFactory';
 
   static const String NAME_IMPORT_ANNOTATION_PREFIX = "jsProxy";
+  final GeneratorJsMimicry generator;
 
   DartClassInfo(
-      Annotation this.annotation, ClassDeclaration node, String importPrefix) {
+      Annotation this.annotation, ClassDeclaration node, this.generator) {
     if (annotation != null) {
       var args = annotation.arguments;
       if (args != null && args.arguments.length != 0) {
@@ -55,23 +56,23 @@ class DartClassInfo {
     }
     //getConstructor
     clazz.dartClassName = node.name.toString();
-    clazz.importPrefix = importPrefix;
+    clazz.library = generator.genImportLibraryPrefix(node.element.library);
 
     parsingConstructors(node);
 
-    node.accept(new DartClassVisitor(this));
+    node.accept(new DartClassVisitor(this,generator));
   }
 
   void parsingConstructors(ClassDeclaration node) {
     node.members
         .where((item) => item is ConstructorDeclaration)
         .forEach((ConstructorDeclaration classMember) {
-      var tmp = new DartMethodInfo.fromConstructor(classMember);
+      var tmp = new DartMethodInfo.fromConstructor(classMember, generator);
       constructors.add(tmp);
     });
   }
   DartMethodInfo addMethod(MethodDeclaration node) {
-    var tmp = new DartMethodInfo(node);
+    var tmp = new DartMethodInfo(node, generator);
     methods.add(tmp);
     if (clazz.dartClassName != clazz.jsPath) {
       //print("dart:${clazz.dartClassName} js:${clazz.jsPath}.${node.name}");
@@ -202,8 +203,7 @@ context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFuncti
   }
 
   generateProxyClass(StringBuffer sb) {
-    sb.writeln(
-        """abstract class ${clazz.dartProxyClass} {""");
+    sb.writeln("""abstract class ${clazz.dartProxyClass} {""");
     sb.writeln('static bool ${DartClassInfo.NAME_PROTOTYPE_FLAG} = false;');
     generateJsRegistrationPrototype(sb);
     generateToJS(sb);

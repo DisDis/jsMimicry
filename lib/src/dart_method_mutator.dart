@@ -2,7 +2,7 @@ part of jsMimicry.generator;
 
 class DartMethodMutator {
   List<String> insertParams = const [];
-  String resultMutator;
+  DartMethodMetadata resultMutator;
 
   List<DartMethodParameter> changeInputParameters(
       List<DartMethodParameter> parameters) {
@@ -22,6 +22,6 @@ class DartMethodMutator {
     if (resultMutator == null) {
       return result;
     }
-    return """${resultMutator}(${result}${insertParams.length==0?'':','+insertParams.join(',')})""";
+    return """${resultMutator.toString()}(${result}${insertParams.length==0?'':','+insertParams.join(',')})""";
   }
 }

@@ -81,7 +81,7 @@ TextEditTransaction _transformCompilationUnit(
   var code = new TextEditTransaction(inputCode, sourceFile);
 
   for (var declaration in unit.declarations) {
-    if (declaration is ClassDeclaration && _hasObservable(declaration)) {
+    if (declaration is ClassDeclaration && _hasJsProxy(declaration)) {
       _transformClass(declaration, code, sourceFile, logger);
     }
   }
@@ -89,10 +89,10 @@ TextEditTransaction _transformCompilationUnit(
 }
 
 
-bool _hasObservable(AnnotatedNode node) =>
-    node.metadata.any(_isObservableAnnotation);
+bool _hasJsProxy(AnnotatedNode node) =>
+    node.metadata.any(_isJsProxyAnnotation);
 
-bool _isObservableAnnotation(Annotation node) =>
+bool _isJsProxyAnnotation(Annotation node) =>
     _isAnnotationType(node, 'JsProxy');
 
 bool _isAnnotationType(Annotation m, String name) => m.name.name == name;
@@ -104,22 +104,22 @@ void _transformClass(ClassDeclaration cls, TextEditTransaction code,
   var implementJsProxyContainer = false;
   if (cls.implementsClause != null) {
     implementJsProxyContainer = cls.implementsClause.interfaces
-        .any((item) => _getSimpleIdentifier(item.name) == DartClassInfo.JsProxyContainer_KEY);
+        .any((item) => _getSimpleIdentifier(item.name) == DartClassInfo.NAME_JS_PROXY_INTERFACE);
   }
   if (!implementJsProxyContainer) {
     if (cls.implementsClause != null) {
       code.edit(cls.implementsClause.interfaces.first.end,
           cls.implementsClause.interfaces.first.end,
-          ', ${DartClassInfo.JsProxyContainer_KEY} ');
+          ', ${DartClassInfo.NAME_JS_PROXY_INTERFACE} ');
     } else {
       int insertPos = cls.leftBracket.offset;
-      code.edit(insertPos, insertPos, ' implements ${DartClassInfo.JsProxyContainer_KEY} ');
+      code.edit(insertPos, insertPos, ' implements ${DartClassInfo.NAME_JS_PROXY_INTERFACE} ');
     }
     code.edit(cls.endToken.offset, cls.endToken.offset, """
     dynamic _${DartClassInfo.JS_INSTANCE_PROXY};
     dynamic get ${DartClassInfo.JS_INSTANCE_PROXY}{
        if (_${DartClassInfo.JS_INSTANCE_PROXY} == null){
-         _${DartClassInfo.JS_INSTANCE_PROXY} = ${DartClassInfo.JsProxyFactory_CLASS}.toJs(this); //${_getSimpleIdentifier(cls.name)}
+         _${DartClassInfo.JS_INSTANCE_PROXY} = ${DartClassInfo.NAME_PROXY_FACTORY}.toJs(this); //${_getSimpleIdentifier(cls.name)}
        }
        return _${DartClassInfo.JS_INSTANCE_PROXY};
     }

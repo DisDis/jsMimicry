@@ -26,8 +26,8 @@
         o1.method4(4,{p3:"3"});
         o1.method4(4,{p2:2});
         o1.method4(4,{p2:22,p3:"33"});
-        //o1.methodLongWork1(okResult,errorResult,1);
-        //o1.methodLongWork2(okResult,errorResult,2);
+        o1.methodLongWork1(okResult,errorResult,1);
+        o1.methodLongWork2(okResult,errorResult,2);
 
         
         // See dart code
@@ -59,7 +59,7 @@
     </script>
   </head>
  
-  <body on-load="runTest">   
+  <body>
     <p id="text"></p>
     <script type="application/dart" src="index.dart"></script>
     <!-- for this next line to work, your pubspec.yaml file must have a dependency on 'browser' -->

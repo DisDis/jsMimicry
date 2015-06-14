@@ -1,8 +1,9 @@
 part of jsMimicry.generator;
 
+
 class DartMethodParameterTransformer {
-  final String methodName;
-  DartMethodParameterTransformer(this.methodName);
+  final DartMethodMetadata method;
+  DartMethodParameterTransformer(this.method);
 
   String generateTransformParamCode(DartMethodParameter param) {
     String paramAccess;
@@ -12,7 +13,7 @@ class DartMethodParameterTransformer {
     } else {
       paramAccess = """${param.name}""";
     }
-    return """${paramAccess} = ${methodName}(${paramAccess});""";
+    return """${paramAccess} = ${method.toString()}(${paramAccess});""";
   }
 }
 
@@ -24,7 +25,8 @@ class DartMethodParameter {
   DartMethodParameter(this.name, this.kind,
       [this.transformer, this.isMutated = false]);
 
-  static DartMethodParameter convert(FormalParameter element) {
+
+  static DartMethodParameter convert(FormalParameter element, GeneratorJsMimicry generator) {
     DartMethodParameterTransformer transformer;
     if (element is SimpleFormalParameter) {
       Annotation annotation = element.metadata.firstWhere(
@@ -33,8 +35,11 @@ class DartMethodParameter {
       if (annotation != null) {
         var args = annotation.arguments;
         if (args != null && args.arguments.length != 0) {
-          transformer = new DartMethodParameterTransformer(
-              (args.arguments[0] as PrefixedIdentifier).name.toString());
+          SimpleIdentifier v = args.arguments[0];
+          var methodMetadata = generator.getMethodMetadata(v);
+          if (methodMetadata != null) {
+            transformer = new DartMethodParameterTransformer(methodMetadata);
+          }
         }
       }
     }
@@ -49,17 +54,17 @@ class DartMethodInfo {
   static const String NAMED_PARAMETERS_NAME = "_input_map_params";
   DartMethodMutator mutator;
   DartMethodInfo.empty(String this.name) : this.parameters = const [];
-  DartMethodInfo.fromConstructor(ConstructorDeclaration node)
+  DartMethodInfo.fromConstructor(ConstructorDeclaration node,GeneratorJsMimicry generator)
       : this.name = node.name != null ? node.name.toString() : null,
-        this.parameters = _convertParameters(node.parameters.parameters) {}
+        this.parameters = _convertParameters(node.parameters.parameters,generator) {}
 
-  DartMethodInfo(MethodDeclaration node)
+  DartMethodInfo(MethodDeclaration node,GeneratorJsMimicry generator)
       : this.name = node.name.toString(),
-        this.parameters = _convertParameters(node.parameters.parameters) {}
+        this.parameters = _convertParameters(node.parameters.parameters,generator) {}
 
   static List<DartMethodParameter> _convertParameters(
-      NodeList<FormalParameter> nodeList) {
-    return nodeList.map(DartMethodParameter.convert).toList(growable: false);
+      NodeList<FormalParameter> nodeList,GeneratorJsMimicry generator) {
+    return nodeList.map((item)=>DartMethodParameter.convert(item,generator)).toList(growable: false);
   }
   void getConstructorCode(
       StringBuffer sb, JsClass clazz, String nameFunction, String parentCall) {

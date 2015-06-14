@@ -3,9 +3,10 @@ part of jsMimicry.generator;
 class GeneratorJsMimicry {
   Map<String, String> superClassByClass = {};
   Map<String, DartClassInfo> classInfo = {};
-  Map<AssetId, String> _importPrefix = {};
+  Map<AssetId, DartLibraryMetadata> _importPrefix = {};
   static const String NAME_jsProxyBootstrap = "jsProxyBootstrap";
-  GeneratorJsMimicry() {}
+  final Resolver resolver;
+  GeneratorJsMimicry(this.resolver) {}
 
   _superClassLink() {
     classInfo.forEach((className, info) {
@@ -18,13 +19,7 @@ class GeneratorJsMimicry {
     });
   }
 
-  String _assetIdToImport(AssetId id) {
-    //js_test|lib/test1.dart
-    if (id.path.startsWith('lib/')) {
-      return 'package:${id.package}/${id.path.substring(4)}';
-    }
-    return id.path.substring(id.path.indexOf("/") + 1);
-  }
+
 
   generateProxyFile(StringBuffer sb /*, String outputFileName*/) {
     _superClassLink();
@@ -37,9 +32,9 @@ class GeneratorJsMimicry {
     sb.writeln(
         "import 'package:js_mimicry/annotation.dart' as ${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX};");
     sb.writeln("");
-    _importPrefix.forEach((importAssetId, importPrefix) {
+    _importPrefix.forEach((importAssetId, library) {
       sb.writeln(
-          "import '${_assetIdToImport(importAssetId)}' as ${importPrefix};");
+          "import '${library.import}' as ${library.importPrefix};");
     });
 
     sb.writeln("");
@@ -49,7 +44,7 @@ class GeneratorJsMimicry {
     sb.writeln("void ${NAME_jsProxyBootstrap}(){");
     classInfo.forEach((k, v) {
       sb.writeln(
-          """${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyFactory_CLASS}.registration(
+          """${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.NAME_PROXY_FACTORY}.registration(
               ${v.clazz.importDartClassName}, ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_REG_PROTOTYPE_METHOD},
                  ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_TO_JS_METHOD}, ${v.clazz.dartProxyClass}.${DartClassInfo.NAME_TO_DART_METHOD});""");
     });
@@ -66,7 +61,7 @@ class GeneratorJsMimicry {
 
     sb.writeln("dynamic _toJs(value){");
     sb.writeln("""
-    if (value is ${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.JsProxyContainer_KEY}){
+    if (value is ${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.NAME_JS_PROXY_INTERFACE}){
       return value.${DartClassInfo.JS_INSTANCE_PROXY};
     }
     return value;
@@ -85,11 +80,32 @@ class GeneratorJsMimicry {
 
   int _importPrefixIndex = 0;
 
-  void phase1(ClassDeclaration node, AssetId assetId) {
-    //uri = 'asset:js_mimicry/test/test1.dart'
-    String classPrefix =
-        _importPrefix.putIfAbsent(assetId, () => "I${_importPrefixIndex++}_");
-    var collector = new CollectorVisitor(this, classPrefix);
+  DartLibraryMetadata genImportLibraryPrefix(LibraryElement library) {
+    var classAssetId = resolver.getSourceAssetId(library);
+    return _importPrefix.putIfAbsent(
+        classAssetId, () => new DartLibraryMetadata(classAssetId,"I${_importPrefixIndex++}_"));
+  }
+
+  void phase1(ClassElement clazz) {
+    ClassDeclaration node = clazz.node;
+    var collector = new CollectorVisitor(this);
     node.accept(collector);
+  }
+
+  DartMethodMetadata getMethodMetadata(Identifier v) {
+    var m = v.staticElement;
+    Declaration mnode = m.node;
+    DartMethodMetadata methodMetadata;
+    if (mnode is MethodDeclaration && mnode.isStatic) {
+      ClassDeclaration clazz = mnode.parent;
+      //print("${clazz.element.name}.${m.name} staticElement:${m} ${mnode.runtimeType} ${clazz.element.library}");
+      var library = genImportLibraryPrefix(clazz.element.library);
+      methodMetadata = new DartMethodMetadata.fromClass(m.name, new DartClassMetadata(clazz.element.name, library));
+    } else if (mnode is FunctionDeclaration) {
+      CompilationUnit parent = mnode.parent;
+      //print("${m.name} staticElement:${m} ${mnode.runtimeType} ${parent.element.library}");
+      methodMetadata = new DartMethodMetadata.fromLibrary(m.name, genImportLibraryPrefix(parent.element.library));
+    }
+    return methodMetadata;
   }
 }

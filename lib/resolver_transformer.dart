@@ -59,7 +59,7 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
     }
     if (!transaction.hasEdits) {
       transaction.edit(mainDeclaration.functionExpression.body.offset+1,mainDeclaration.functionExpression.body.offset+1,' ${GeneratorJsMimicry.NAME_jsProxyBootstrap}(); ');
-      transaction.edit(mainDeclaration.end-1,mainDeclaration.end-1,' ${DartClassInfo.JsProxyFactory_CLASS}.init(); ');
+      transaction.edit(mainDeclaration.end-1,mainDeclaration.end-1,' ${DartClassInfo.NAME_PROXY_FACTORY}.init(); ');
     }
 
 
@@ -87,7 +87,7 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
       return;
     }
 
-    GeneratorJsMimicry generator = new GeneratorJsMimicry();
+    GeneratorJsMimicry generator = new GeneratorJsMimicry(resolver);
 //    transform.logger.info("Js: $_primaryInputId");
     resolver.libraries.forEach((LibraryElement lib){
       if (lib.isInSdk){
@@ -100,10 +100,8 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
         var annotationE = clazz.metadata.firstWhere((ElementAnnotation item)=>item.element.enclosingElement.displayName == DartClassInfo.ANNOTATION_CLASS,orElse:()=>null);
         //clazz.metadata.forEach((ElementAnnotation item)=>print('name:$clazz ${item.element.enclosingElement.displayName}'));
         if (annotationE != null) {
-          ClassDeclaration node = clazz.node;
-          //asset:js_mimicry/test/test1.dart'
-          var classAssetId = resolver.getSourceAssetId(clazz.library);
-          generator.phase1(node,classAssetId);
+
+          generator.phase1(clazz);
         }
       }
     });
