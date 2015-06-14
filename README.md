@@ -47,6 +47,7 @@ transformers:
 Sample
 -----------
 ##Dart code
+```dart
     class Test1{
       method1(p1,[p2]){/* code */}
       method2(p1,p2){/* code */}
@@ -59,8 +60,10 @@ Sample
       Test1 method5({namedP1, namedP2}){/* code */}
       String method6(int value){/* code */}
     }
+```
 
 ##Add annotation for class
+```dart
     @JsProxy()
     class Test1{  // ... cut ...
     }
@@ -68,8 +71,10 @@ Sample
     @JsProxy()
     class Test2 extends Test1{ // ... cut ...
     }
+```
     
 ##Add annotation for transform input parameter
+```dart
     String method6(@JsTransform(ANY_TO_INT) int value){/* code */}
 
     static int ANY_TO_INT(Object v){
@@ -78,8 +83,10 @@ Sample
         }
         return v as int;
     }
+```
     
 ##Add annotation for mutation result Future
+```dart
     @JsMutator(insertParams:const ["resultCb","errorCb"],result:Test2.futureToCallbacks)
     Future<int> method4(){/* code */}
     
@@ -90,29 +97,36 @@ Sample
         result.then((o)=>resultCb.apply([o]));
         return result;
     }
+```
 
 ##Add annotation for mutation result
+```dart
     @JsMutator(result:ANY_TO_STRING)
     Test1 method5(){/* code */}
 
     static ANY_TO_STRING(v)=>v.toString();
+```
     
 ### Import to javascript
+```dart
     import 'dart:js' as js;
+    import 'package:js_mimicry/annotation.dart';
     main(){
-      // Export Test2 class to JS
-      Test2Proxy.jsRegistrationPrototype();
       // Create instance Test1
-      js.context["dartInstanceTest1"] = JsProxyFactory.toJs((new Test1());
+      js.context["dartInstanceTest1"] = JsProxyFactory.toJs(new Test1());
     }
+```
+
 ### Uses in javascript
+```dart
     // Create Test2 instance, call method5 with named parameters
     new Test2().method5({namedP1:"123"});
     // call Test1.method1 with optional parameters
     dartInstanceTest1.method1("1");
+```
 
 ## JsProxyFactory methods
-###<i>JsObject</i> toJs(<i>DartClass</i> obj)
+###JsObject toJs(DartClass obj)
 Create proxy object for Test2 object.
-###<i>DartClass</i> toDart(Type dartType, JsObject obj)
+###DartClass toDart(Type dartType, JsObject obj)
 Convert javascript proxy to real Dart object.
