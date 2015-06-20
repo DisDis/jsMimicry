@@ -35,6 +35,22 @@ class DartClassInfo {
   static const String NAME_IMPORT_ANNOTATION_PREFIX = "jsProxy";
   final GeneratorJsMimicry generator;
 
+  _searchJsProxyParent(ClassElement element) {
+    while (element != null) {
+      if (element.library.isInSdk) {
+        return null;
+      }
+      if (GeneratorJsMimicry.getAnnotationFromElement(element)!=null) {
+        JsClass result = new JsClass();
+        result.dartClassName = element.name;
+        result.library = generator.genImportLibraryPrefix(element.library);
+        return result;
+      }
+      element = element.supertype.element;
+    }
+    return null;
+  }
+
   DartClassInfo(
       Annotation this.annotation, ClassDeclaration node, this.generator) {
     if (annotation != null) {
@@ -51,8 +67,7 @@ class DartClassInfo {
       clazz.className = node.name.toString();
     }
     if (node.extendsClause != null) {
-      superClazz = new JsClass();
-      superClazz.dartClassName = node.extendsClause.superclass.toString();
+        superClazz = _searchJsProxyParent(node.element.supertype.element);
     }
     //getConstructor
     clazz.dartClassName = node.name.toString();

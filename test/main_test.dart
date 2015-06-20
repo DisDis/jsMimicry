@@ -129,6 +129,7 @@ initTest() {
       var objDart = new SimpleClass8();
       expect(obj, isNotNull);
       expect(obj.instanceof(ctor), isTrue);
+      expect(getObjectByPath('SimpleClass7SkipJsProxy'), isNull);
       expect(obj.instanceof(getObjectByPath("SimpleClass3")), isTrue);
       expect(obj.callMethod('method1woArgs'), equals(objDart.method1woArgs()));
     });

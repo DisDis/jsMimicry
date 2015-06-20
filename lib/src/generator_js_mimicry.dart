@@ -1,7 +1,6 @@
 part of jsMimicry.generator;
 
 class GeneratorJsMimicry {
-  Map<String, String> superClassByClass = {};
   Map<String, DartClassInfo> classInfo = {};
   Map<AssetId, DartLibraryMetadata> _importPrefix = {};
   static const String NAME_jsProxyBootstrap = "jsProxyBootstrap";
@@ -11,7 +10,7 @@ class GeneratorJsMimicry {
   _superClassLink() {
     classInfo.forEach((className, info) {
       if (info.superClazz != null) {
-        var parenClassInfo = classInfo[info.superClazz.dartClassName];
+        var parenClassInfo = classInfo[info.superClazz.importDartClassName];
         if (parenClassInfo != null) {
           info.superClazz = parenClassInfo.clazz;
         }
@@ -19,6 +18,19 @@ class GeneratorJsMimicry {
     });
   }
 
+  static ElementAnnotation getAnnotationFromElement(Element clazz) {
+    return clazz.metadata.firstWhere((ElementAnnotation item) => item.element.enclosingElement.displayName == DartClassInfo.ANNOTATION_CLASS, orElse:() => null);
+  }
+
+  static Annotation getAnnotation(ClassDeclaration node) {
+    if (node.metadata != null) {
+      return node.metadata.firstWhere(
+              (ann) => ann.name.toString() == DartClassInfo.ANNOTATION_CLASS,
+          orElse: () => null);
+    } else {
+      return null;
+    }
+  }
 
 
   generateProxyFile(StringBuffer sb /*, String outputFileName*/) {
@@ -90,6 +102,8 @@ class GeneratorJsMimicry {
     ClassDeclaration node = clazz.node;
     var collector = new CollectorVisitor(this);
     node.accept(collector);
+//    var dci = new DartClassInfo(annotation, node, this);
+//    classInfo[dci.clazz.importDartClassName] = dci;
   }
 
   DartMethodMetadata getMethodMetadata(Identifier v) {

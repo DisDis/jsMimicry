@@ -88,19 +88,14 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
     }
 
     GeneratorJsMimicry generator = new GeneratorJsMimicry(resolver);
-//    transform.logger.info("Js: $_primaryInputId");
     resolver.libraries.forEach((LibraryElement lib){
       if (lib.isInSdk){
         return;
       }
-//      transform.logger.info("lib: ${lib.displayName}");
       var classes = lib.units.expand((u) => u.types);
       for (var clazz in classes) {
-
-        var annotationE = clazz.metadata.firstWhere((ElementAnnotation item)=>item.element.enclosingElement.displayName == DartClassInfo.ANNOTATION_CLASS,orElse:()=>null);
-        //clazz.metadata.forEach((ElementAnnotation item)=>print('name:$clazz ${item.element.enclosingElement.displayName}'));
+        var annotationE = GeneratorJsMimicry.getAnnotationFromElement(clazz);
         if (annotationE != null) {
-
           generator.phase1(clazz);
         }
       }

@@ -30,11 +30,6 @@ class Test22 extends Test11{
   set propTest2(Test22 v)=>_propTest2=v;
 }
 
-@JsProxy("dart.TestGeneric1")
-class TestGeneric1<E>{
-  E fieldGen1;
-}
-
 @JsProxy()
 class Test113 extends Object{
 }
