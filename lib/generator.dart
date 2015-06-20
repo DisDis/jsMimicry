@@ -24,6 +24,7 @@ class CollectorVisitor extends GeneralizingAstVisitor {
     String className = node.name.toString();
     if (node.extendsClause != null) {
       superClass = node.extendsClause.superclass.toString();
+      print("superClass: $superClass");
     }
     generator.superClassByClass[className] = superClass;
       Annotation annotation;

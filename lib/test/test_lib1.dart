@@ -51,12 +51,20 @@ class SimpleClass6 extends SimpleClass5 {
   String getPropertyString3()=>_privateProperty3_;
 }
 
+class SimpleClass7SkipJsProxy extends SimpleClass3{
+
+}
 @JsProxy()
-class GenericClass1<T> extends SimpleClass5 {
-   T field1;
+class SimpleClass8 extends SimpleClass7SkipJsProxy{
+
 }
 
 @JsProxy()
-class GenericClass2<T,K> extends GenericClass1<T> {
-  K field2;
+class GenericClass1<T> extends SimpleClass5 {
+   T field1 = "GenericClass1_field1";
+}
+
+@JsProxy()
+class GenericClass2 extends GenericClass1<String> {
+  String field2 = "GenericClass2_field1";
 }

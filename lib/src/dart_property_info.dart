@@ -11,7 +11,7 @@ class DartPropertyInfo{
   }
 
   void getCode(StringBuffer sb, JsClass clazz){
-
+    sb.writeln("//    property '$name'");
     sb.writeln("js.context['Object'].callMethod('defineProperty',[proto,'$name', new js.JsObject.jsify({");
     if (isWritable){
       sb.writeln("""'set': new js.JsFunction.withThis((that, value) {

@@ -74,13 +74,14 @@ class DartMethodInfo {
       _generateParams(sbParamsWithType, sbParams);
     }
     String postFixName = name == null ? '' : '_$name';
+    sb.writeln("//    constructor '${nameFunction}.${name == null ? '' : name}'");
     sb.writeln(
         """context[r"${nameFunction}${postFixName}"] = new js.JsFunction.withThis((that$sbParamsWithType) {""");
     _generateParamTransforms(sb);
-    sb.writeln("""print(r"ctr:${clazz.jsPath}${postFixName}");
-      var obj = new ${clazz.importDartClassName}${name==null?'':'.$name'}($sbParams);
-      obj.JS_INSTANCE_PROXY = that;
-      that[r"${DartClassInfo.DART_OBJ_KEY}"] = obj;$parentCall
+    sb.writeln("""//print(r"ctr:${clazz.jsPath}${postFixName}");
+      var _obj_ = new ${clazz.importDartClassName}${name==null?'':'.$name'}($sbParams);
+      _obj_.JS_INSTANCE_PROXY = that;
+      that[r"${DartClassInfo.DART_OBJ_KEY}"] = _obj_;$parentCall
     });""");
   }
   void getMethodCode(StringBuffer sb, JsClass clazz) {
@@ -89,6 +90,7 @@ class DartMethodInfo {
     if (parameters.length > 0) {
       _generateParams(sbParamsWithType, sbParams);
     }
+    sb.writeln("//   method '${name}'");
     sb.writeln(
         """proto[r'${name}'] = new js.JsFunction.withThis((that$sbParamsWithType) {""");
     _generateParamTransforms(sb);

@@ -99,9 +99,9 @@ class DartClassInfo {
       parentCall.writeln("// Call parent ctor '${parentClass}'");
       parentCallInt.writeln("// Call parent ctor '${parentClass}'");
       parentCall.writeln(
-          '''${contextParent}[r"${parentClass}_int"].callMethod('call',[that,obj]);''');
+          '''${contextParent}[r"${parentClass}_int"].callMethod('call',[that,_obj_]);''');
       parentCallInt.writeln(
-          '''${contextParent}[r"${parentClass}_int"].callMethod('call',[that,obj]);''');
+          '''${contextParent}[r"${parentClass}_int"].callMethod('call',[that,_obj_]);''');
     }
 
     sb.writeln("");
@@ -133,9 +133,9 @@ context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFuncti
     });
     sb.writeln("""// Constructor for method toJs""");
     sb.writeln(
-        """context[r"${nameFunction}_int"] = new js.JsFunction.withThis((that, obj) {
+        """context[r"${nameFunction}_int"] = new js.JsFunction.withThis((that, _obj_) {
       //print(r"ctr:${clazz.jsPath}_int");
-      that[r"${DART_OBJ_KEY}"] = obj;$parentCallInt
+      that[r"${DART_OBJ_KEY}"] = _obj_;$parentCallInt
     });""");
     sb.writeln("""// Constructors connect to prototype""");
     constructors.forEach((ctr) {
@@ -144,6 +144,7 @@ context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFuncti
             """context[r"${nameFunction}_${ctr.name}"]["prototype"] = proto;""");
       }
     });
+    sb.writeln("//   internal constructor");
     sb.writeln('context[r"${nameFunction}_int"]["prototype"] = proto;');
     sb.writeln("""// Properties""");
     properties.forEach((prop) => prop.getCode(sb, clazz));

@@ -1,11 +1,13 @@
 @TestOn("vm")
 library jsMimicry.test;
+
 import "dart:async";
 import 'dart:js';
 
 import "package:test/test.dart";
 import "package:js_mimicry/annotation.dart";
 import "package:js_mimicry/test/test_lib1.dart";
+
 const String DART_OBJ_KEY = "_dartObj";
 
 JsObject getObjectByPath(String path) {
@@ -65,7 +67,8 @@ initTest() {
       expect(obj.callMethod("method4woArgs"), equals(dartObj.method4woArgs()));
     });
     test("SimpleClass4 - constructor w/o args", () {
-      var obj = new JsObject(getObjectByPath("SimpleClass4_public1") as JsFunction);
+      var obj =
+          new JsObject(getObjectByPath("SimpleClass4_public1") as JsFunction);
       expect(obj, isNotNull);
       obj = new JsObject(getObjectByPath("SimpleClass4") as JsFunction);
       expect(obj, isNotNull);
@@ -77,17 +80,20 @@ initTest() {
       expect(obj, isNotNull);
       var objDart = new SimpleClass5();
       //propertyString1ReadOnly()
-      expect(obj["propertyString1ReadOnly"], equals(objDart.propertyString1ReadOnly));
+      expect(obj["propertyString1ReadOnly"],
+          equals(objDart.propertyString1ReadOnly));
       expect(obj["propertyInt1ReadOnly"], equals(objDart.propertyInt1ReadOnly));
       obj["propertyString1ReadOnly"] = "TEST";
-      expect(obj["propertyString1ReadOnly"], equals(objDart.propertyString1ReadOnly));
+      expect(obj["propertyString1ReadOnly"],
+          equals(objDart.propertyString1ReadOnly));
       obj["propertyInt1ReadOnly"] = 1;
       expect(obj["propertyInt1ReadOnly"], equals(objDart.propertyInt1ReadOnly));
       expect(obj["_privateProperty2"], isNull);
       expect(obj["propertyString2"], equals(objDart.propertyString2));
       obj["propertyString2"] = objDart.propertyString2 = "TEST_STR";
       expect(obj["propertyString2"], equals(objDart.propertyString2));
-      expect(obj.callMethod('getPropertyString2'), equals(objDart.getPropertyString2()));
+      expect(obj.callMethod('getPropertyString2'),
+          equals(objDart.getPropertyString2()));
     });
 
     test("SimpleClass6 - inheritance", () {
@@ -103,21 +109,47 @@ initTest() {
       var ctor = getObjectByPath("SimpleClass6") as JsFunction;
       var obj = new JsObject(ctor);
       var objDart = new SimpleClass6();
-      expect(obj["propertyString1ReadOnly"], equals(objDart.propertyString1ReadOnly));
-      expect(obj.callMethod("getPropertyString2"), equals(objDart.getPropertyString2()));
+      expect(obj["propertyString1ReadOnly"],
+          equals(objDart.propertyString1ReadOnly));
+      expect(obj.callMethod("getPropertyString2"),
+          equals(objDart.getPropertyString2()));
       expect(obj["propertyString2"], equals(objDart.propertyString2));
 
       expect(obj["propertyString3"], equals(objDart.propertyString3));
       obj["propertyString3"] = "123";
       objDart.propertyString3 = "123";
       expect(obj["propertyString3"], equals(objDart.propertyString3));
-      expect(obj.callMethod("getPropertyString3"), equals(objDart.getPropertyString3()));
+      expect(obj.callMethod("getPropertyString3"),
+          equals(objDart.getPropertyString3()));
     });
 
+    test("SimpleClass8 - inheritance skip jsProxy parent", () {
+      var ctor = getObjectByPath("SimpleClass8") as JsFunction;
+      var obj = new JsObject(ctor);
+      var objDart = new SimpleClass8();
+      expect(obj, isNotNull);
+      expect(obj.instanceof(ctor), isTrue);
+      expect(obj.instanceof(getObjectByPath("SimpleClass3")), isTrue);
+      expect(obj.callMethod('method1woArgs'), equals(objDart.method1woArgs()));
+    });
+  });
+
+  group("Generic", () {
+    test("GenericClass2", () {
+      var ctor = getObjectByPath("GenericClass2") as JsFunction;
+      var obj = new JsObject(ctor);
+      var objDart = new GenericClass2();
+      expect(obj, isNotNull);
+      expect(obj.instanceof(ctor), isTrue);
+      expect(obj.instanceof(getObjectByPath("GenericClass2")), isTrue);
+      expect(obj.instanceof(getObjectByPath("GenericClass1")), isTrue);
+      expect(obj["field2"], equals(objDart.field2));
+      expect(obj["field1"], equals(objDart.field1));
+    });
   });
 }
 
-main(){
+main() {
   context["dart"] = new JsObject.jsify({});
   initTest();
 }

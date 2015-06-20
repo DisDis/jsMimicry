@@ -66,7 +66,7 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
     for (var directive in unit.directives) {
       if (directive is ImportDirective) {
         transaction.edit(directive.offset, directive.offset,
-        'import "package:${id.package}/${jsProxyBootstrapFile(transform)}";\nimport "package:js_mimicry/annotation.dart";\n');
+        'import "package:${id.package}/${jsProxyBootstrapFile(transform)}";import "package:js_mimicry/annotation.dart";');
         break;
       }
     }
