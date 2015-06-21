@@ -11,16 +11,16 @@ dependencies:
   analyzer: '>=0.23.0 <0.26.0'
   path: '>=1.3.5 <2.0.0'
   code_transformers: '>=0.2.0 <0.3.0'
-  dom_stub:
+#  dom_stub:
 #    git:
 #          url: https://github.com/DisDis/dom_stub
-    path: ../dom-stub
-  test: '>=0.12.0 <0.13.0'
+#    path: ../dom-stub
 dev_dependencies:
+  test: '>=0.12.0 <0.13.0'
   barback: any
   browser: any
 transformers:
  - js_mimicry
- - dom_stub
+# - dom_stub
  - test/pub_serve:
     $include: test/**_test{.*,}.dart

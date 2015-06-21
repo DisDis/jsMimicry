@@ -18,6 +18,7 @@ JsObject getObjectByPath(String path) {
 }
 
 initTest() {
+
   group("Simple", () {
     test("SimpleClass1", () {
       var link = getObjectByPath("SimpleClass1");
@@ -143,7 +144,8 @@ initTest() {
       expect(obj, isNotNull);
       expect(obj.instanceof(ctor), isTrue);
       expect(obj.instanceof(getObjectByPath("GenericClass2")), isTrue);
-      expect(obj.instanceof(getObjectByPath("GenericClass1")), isTrue);
+      expect(obj.instanceof(getObjectByPath("SimpleClass5")), isTrue);
+      //expect(obj.instanceof(getObjectByPath("GenericClass1")), isTrue);
       expect(obj["field2"], equals(objDart.field2));
       expect(obj["field1"], equals(objDart.field1));
     });
