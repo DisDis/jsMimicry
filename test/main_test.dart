@@ -134,6 +134,28 @@ initTest() {
       expect(obj.instanceof(getObjectByPath("SimpleClass3")), isTrue);
       expect(obj.callMethod('method1woArgs'), equals(objDart.method1woArgs()));
     });
+
+    test("SimpleClass9Abstract - abstract class", () {
+      var ctor = getObjectByPath("SimpleClass9Abstract") as JsFunction;
+      try {
+        var obj = new JsObject(ctor);
+        expect(obj,isNotNull);
+      }catch(e){
+        expect(e,isUnsupportedError);
+      }
+    });
+    test("SimpleClass10 - abstract parent", () {
+      var ctor = getObjectByPath("SimpleClass10") as JsFunction;
+      var obj = new JsObject(ctor);
+      var objDart = new SimpleClass10();
+      expect(obj, isNotNull);
+      expect(obj.instanceof(ctor), isTrue);
+      expect(obj.instanceof(getObjectByPath("SimpleClass3")), isTrue);
+      expect(obj.instanceof(getObjectByPath("SimpleClass10")), isTrue);
+      expect(obj.callMethod('method1woArgs'), equals(objDart.method1woArgs()));
+      expect(obj.callMethod('method1AbstractClass'), equals(objDart.method1AbstractClass()));
+      expect(obj.callMethod('method1SimpleClass10'), equals(objDart.method1SimpleClass10()));
+    });
   });
 
   group("Generic", () {

@@ -60,6 +60,17 @@ class SimpleClass8 extends SimpleClass7SkipJsProxy{
 }
 
 @JsProxy()
+abstract class SimpleClass9Abstract extends SimpleClass3 {
+  int method1AbstractClass()=>10;
+}
+
+@JsProxy()
+class SimpleClass10 extends SimpleClass9Abstract {
+  int method1SimpleClass10()=>11;
+}
+
+
+@JsProxy()
 class GenericClass1<T> extends SimpleClass5 {
    T field1 = "GenericClass1_field1";
 }

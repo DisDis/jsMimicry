@@ -67,7 +67,9 @@ class DartMethodInfo {
     return nodeList.map((item)=>DartMethodParameter.convert(item,generator)).toList(growable: false);
   }
   void getConstructorCode(
-      StringBuffer sb, JsClass clazz, String nameFunction, String parentCall) {
+      DartClassInfo dci, StringBuffer sb, String parentCall) {
+    var constructorPath = dci.clazz.jsPath.split('.');
+    String nameFunction = constructorPath.last;
     StringBuffer sbParamsWithType = new StringBuffer();
     StringBuffer sbParams = new StringBuffer();
     if (parameters.length > 0) {
@@ -78,11 +80,15 @@ class DartMethodInfo {
     sb.writeln(
         """context[r"${nameFunction}${postFixName}"] = new js.JsFunction.withThis((that$sbParamsWithType) {""");
     _generateParamTransforms(sb);
-    sb.writeln("""//print(r"ctr:${clazz.jsPath}${postFixName}");
-      var _obj_ = new ${clazz.importDartClassName}${name==null?'':'.$name'}($sbParams);
-      _obj_.JS_INSTANCE_PROXY = that;
-      that[r"${DartClassInfo.DART_OBJ_KEY}"] = _obj_;$parentCall
-    });""");
+    sb.writeln("""//print(r"ctr:${dci.clazz.jsPath}${postFixName}");""");
+    if (dci.isAbstract) {
+      sb.writeln("""   throw new UnsupportedError("Abstract class '${dci.clazz.dartClassName}'");""");
+    }else{
+      sb.writeln("""    var _obj_ = new ${dci.clazz.importDartClassName}${name == null ? '' : '.$name'}($sbParams);""");
+      sb.writeln("""    _obj_.JS_INSTANCE_PROXY = that;""");
+      sb.writeln("""    that[r"${DartClassInfo.DART_OBJ_KEY}"] = _obj_;$parentCall""");
+    }
+    sb.writeln("""  });""");
   }
   void getMethodCode(StringBuffer sb, JsClass clazz) {
     StringBuffer sbParamsWithType = new StringBuffer();

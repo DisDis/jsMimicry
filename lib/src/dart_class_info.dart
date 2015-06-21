@@ -18,6 +18,7 @@ class DartClassInfo {
 
   JsClass clazz = new JsClass();
   JsClass superClazz;
+  final bool isAbstract;
 
   static const String ANNOTATION_CLASS = "JsProxy";
   static const String ANNOTATION_METHOD = "JsMutator";
@@ -52,7 +53,7 @@ class DartClassInfo {
   }
 
   DartClassInfo(
-      Annotation this.annotation, ClassDeclaration node, this.generator) {
+      Annotation this.annotation, ClassDeclaration node, this.generator):this.isAbstract = node.isAbstract {
     if (annotation != null) {
       var args = annotation.arguments;
       if (args != null && args.arguments.length != 0) {
@@ -168,14 +169,12 @@ context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFuncti
 
   void _generatePrototypeConstructors(
       StringBuffer sb, StringBuffer parentCall) {
-    var constructorPath = clazz.jsPath.split('.');
-    var nameFunction = constructorPath.last;
     if (constructors.length == 0) {
-      new DartMethodInfo.empty(null).getConstructorCode(
-          sb, clazz, nameFunction, parentCall.toString());
+      new DartMethodInfo.empty(null).getConstructorCode(this,
+          sb, parentCall.toString());
     } else {
       constructors.forEach((ctr) {
-        ctr.getConstructorCode(sb, clazz, nameFunction, parentCall.toString());
+        ctr.getConstructorCode(this,sb, parentCall.toString());
       });
     }
   }
