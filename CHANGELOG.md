@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.2+2
+## 0.0.2+3
 
 - Added tests
 - Fix: source shift
