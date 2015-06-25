@@ -21,6 +21,7 @@ class DartClassInfo {
   final bool isAbstract;
 
   static const String ANNOTATION_CLASS = "JsProxy";
+  static const String ANNOTATION_IGNORE = "JsIgnore";
   static const String ANNOTATION_METHOD = "JsMutator";
   static const String ANNOTATION_PARAMETER = "JsTransform";
 

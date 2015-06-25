@@ -21,6 +21,13 @@ class JsTransform{
   const JsTransform(Function transformer);
 }
 
+/**
+ * Ignore method/field/property
+ */
+class JsIgnore{
+  const JsIgnore();
+}
+
 abstract class JsProxyContainer{
   dynamic JS_INSTANCE_PROXY;
   bool get hasJsInstance;

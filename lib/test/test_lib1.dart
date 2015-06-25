@@ -60,6 +60,18 @@ class SimpleClass8 extends SimpleClass7SkipJsProxy{
 }
 
 @JsProxy()
+class SimpleClass11{
+  @JsIgnore()
+  ignoreMethod1()=>"ignoreMethod1";
+  @JsIgnore()
+  String ignoreField1 = "ignoreField1";
+  @JsIgnore()
+  String get ignoreProperty=>ignoreField1;
+  @JsIgnore()
+  set ignoreProperty(v)=>ignoreField1=v;
+}
+
+@JsProxy()
 abstract class SimpleClass9Abstract extends SimpleClass3 {
   int method1AbstractClass()=>10;
 }

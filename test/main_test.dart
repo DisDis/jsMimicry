@@ -27,6 +27,7 @@ initTest() {
       var obj = new JsObject(ctor);
       expect(obj, isNotNull);
       expect(obj.instanceof(ctor), isTrue);
+      //expect(obj.instanceof(getObjectByPath("Object")), isTrue);
       expect(obj.instanceof(getObjectByPath("SimpleClass3")), isFalse);
       var dartObj = obj[DART_OBJ_KEY] as JsProxyContainer;
       expect(dartObj, isNotNull);
@@ -156,11 +157,30 @@ initTest() {
       expect(obj.callMethod('method1AbstractClass'), equals(objDart.method1AbstractClass()));
       expect(obj.callMethod('method1SimpleClass10'), equals(objDart.method1SimpleClass10()));
     });
+
+    test("SimpleClass10 - JsIgnore", () {
+      var ctor = getObjectByPath("SimpleClass11") as JsFunction;
+      var obj = new JsObject(ctor);
+      var objDart = new SimpleClass11();
+      expect(obj, isNotNull);
+      expect(obj.instanceof(ctor), isTrue);
+      expect(obj.hasProperty("ignoreMethod1"), isFalse);
+      expect(obj.hasProperty("ignoreField1"), isFalse);
+      expect(obj.hasProperty("ignoreProperty"), isFalse);
+      var ctorProto = ctor["prototype"];
+      expect(ctorProto.hasProperty("ignoreMethod1"), isFalse);
+      expect(ctorProto.hasProperty("ignoreField1"), isFalse);
+      expect(ctorProto.hasProperty("ignoreProperty"), isFalse);
+      expect(()=>obj.callMethod("ignoreMethod1"), throwsNoSuchMethodError);
+    });
+
   });
 
   group("Generic", () {
     test("GenericClass2", () {
+      expect(getObjectByPath("GenericClass1") as JsFunction, isNotNull);
       var ctor = getObjectByPath("GenericClass2") as JsFunction;
+      expect(ctor, isNotNull);
       var obj = new JsObject(ctor);
       var objDart = new GenericClass2();
       expect(obj, isNotNull);

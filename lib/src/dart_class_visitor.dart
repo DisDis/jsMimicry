@@ -25,12 +25,15 @@ class DartClassVisitor extends GeneralizingAstVisitor {
     }
     return dmm;
   }
+  bool _isIgnore(AnnotatedNode node){
+    return node.metadata.any((annotation)=>annotation.name.toString() == DartClassInfo.ANNOTATION_IGNORE);
+  }
 
   @override
   visitMethodDeclaration(MethodDeclaration node) {
     if (!node.isAbstract && !node.isOperator && !node.isStatic
         //&& node.name.toString() != DartClassInfo.NAME_TO_JS_METHOD
-        && !node.name.toString().startsWith("_")) {
+        && !node.name.toString().startsWith("_") && !_isIgnore(node)) {
       DartMethodMutator dmm = null;
       if (node.metadata != null) {
         node.metadata.forEach((annotation) {
@@ -52,7 +55,7 @@ class DartClassVisitor extends GeneralizingAstVisitor {
   @override
   visitFieldDeclaration(FieldDeclaration node) {
     //print("visitFieldDeclaration: ${node}");
-    if (!node.isStatic) {
+    if (!node.isStatic && !_isIgnore(node)) {
       jsProxyInfo.addField(node);
     }
     return super.visitFieldDeclaration(node);
