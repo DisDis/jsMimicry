@@ -192,6 +192,40 @@ initTest() {
       expect(obj["field1"], equals(objDart.field1));
     });
   });
+  group("JsTransform", () {
+    test("JsTransformClass1 typical param", () {
+      var ctor = getObjectByPath("JsTransformClass1") as JsFunction;
+      expect(ctor, isNotNull);
+      var obj = new JsObject(ctor);
+      expect(obj, isNotNull);
+      expect(obj.callMethod('method1AlwaysString',[1]), isTrue);
+      expect(obj.callMethod('method1AlwaysString',[false]), isTrue);
+      expect(obj.callMethod('method1AlwaysString',["text"]), isTrue);
+      expect(obj.callMethod('method1AlwaysString',[null]), isFalse);
+    });
+
+    test("JsTransformClass1 optional param", () {
+      var ctor = getObjectByPath("JsTransformClass1") as JsFunction;
+      expect(ctor, isNotNull);
+      var obj = new JsObject(ctor);
+      expect(obj, isNotNull);
+      expect(obj.callMethod('method2WithOptParamAlwaysString',[1]), isTrue);
+      expect(obj.callMethod('method2WithOptParamAlwaysString',[false]), isTrue);
+      expect(obj.callMethod('method2WithOptParamAlwaysString',["text"]), isTrue);
+      expect(obj.callMethod('method2WithOptParamAlwaysString',[null]), isFalse);
+    });
+    test("JsTransformClass1 named param", () {
+      var ctor = getObjectByPath("JsTransformClass1") as JsFunction;
+      expect(ctor, isNotNull);
+      var obj = new JsObject(ctor);
+      expect(obj, isNotNull);
+      expect(obj.callMethod('method3WithNameParamAlwaysString',[{'v':1}]), isTrue);
+      expect(obj.callMethod('method3WithNameParamAlwaysString',[{'v':false}]), isTrue);
+      expect(obj.callMethod('method3WithNameParamAlwaysString',[{'v':"text"}]), isTrue);
+      expect(obj.callMethod('method3WithNameParamAlwaysString',[{'v':null}]), isFalse);
+      //expect(obj.callMethod('method3WithNameParamAlwaysString',[]), isFalse);
+    });
+  });
 }
 
 main() {

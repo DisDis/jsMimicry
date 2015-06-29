@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.2.1+1
+
+- Fix: JsTransform for optional and named param
+
 ## 0.2.1
 
--- Support JsIgnore
+- Support JsIgnore
 
 ## 0.2.0+4
 

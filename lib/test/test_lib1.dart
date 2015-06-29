@@ -91,3 +91,19 @@ class GenericClass1<T> extends SimpleClass5 {
 class GenericClass2 extends GenericClass1<String> {
   String field2 = "GenericClass2_field1";
 }
+
+@JsProxy()
+class JsTransformClass1 {
+  static String ANY_TO_STRING1(v)=>v!=null?"$v":null;
+  static String ANY_TO_STRING2(v)=>v!=null?"$v":null;
+  static String ANY_TO_STRING3(v)=>v!=null?"$v":null;
+  bool method1AlwaysString(@JsTransform(ANY_TO_STRING1)v){
+    return v is String;
+  }
+  bool method2WithOptParamAlwaysString([@JsTransform(ANY_TO_STRING2)v]){
+    return v is String;
+  }
+  bool method3WithNameParamAlwaysString({@JsTransform(ANY_TO_STRING3)v}){
+    return v is String;
+  }
+}

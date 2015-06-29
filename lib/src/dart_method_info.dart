@@ -28,8 +28,15 @@ class DartMethodParameter {
 
   static DartMethodParameter convert(FormalParameter element, GeneratorJsMimicry generator) {
     DartMethodParameterTransformer transformer;
-    if (element is SimpleFormalParameter) {
-      Annotation annotation = element.metadata.firstWhere(
+    NodeList<Annotation> metadata;
+    if (element is DefaultFormalParameter){
+      metadata = (element as DefaultFormalParameter).parameter.metadata;
+    }else if (element is NormalFormalParameter){
+      metadata = element.metadata;
+    }
+
+    if (metadata != null) {
+      Annotation annotation = metadata.firstWhere(
           (ann) => ann.name.toString() == DartClassInfo.ANNOTATION_PARAMETER,
           orElse: () => null);
       if (annotation != null) {
