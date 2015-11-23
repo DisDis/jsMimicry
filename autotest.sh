@@ -4,9 +4,9 @@
 # LINTER
 PUB_SERVE_PORT=8089
 # chrome,vm
-TEST_PLATFORM_TARGET=vm
+TEST_PLATFORM_TARGET=dartium
 # EXPORT ENV
-export DOM_STUB="true"
+#export DOM_STUB="true"
 export TEST_ROOT_PATH="./test/"
 # ----------------
 #echo "Installing linter"

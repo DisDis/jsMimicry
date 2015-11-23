@@ -1,4 +1,4 @@
-@TestOn("vm")
+@TestOn("vm||dartium")
 library jsMimicry.test;
 
 import "dart:async";
@@ -22,7 +22,7 @@ initTest() {
   group("Simple", () {
     test("SimpleClass1", () {
       var link = getObjectByPath("SimpleClass1");
-      expect(link.runtimeType, equals(JsFunction));
+      expect(link is JsFunction, isTrue);
       JsFunction ctor = link as JsFunction;
       var obj = new JsObject(ctor);
       expect(obj, isNotNull);
@@ -47,7 +47,7 @@ initTest() {
     });
     test("SimpleClass2WithNS", () {
       var link = getObjectByPath("dart.SimpleClass2WithNS");
-      expect(link.runtimeType, equals(JsFunction));
+      expect(link is JsFunction, isTrue);
       JsFunction ctor = link as JsFunction;
       var obj = new JsObject(ctor);
       expect(obj, isNotNull);
@@ -138,12 +138,7 @@ initTest() {
 
     test("SimpleClass9Abstract - abstract class", () {
       var ctor = getObjectByPath("SimpleClass9Abstract") as JsFunction;
-      try {
-        var obj = new JsObject(ctor);
-        expect(obj,isNotNull);
-      }catch(e){
-        expect(e,isUnsupportedError);
-      }
+      expect(()=> new JsObject(ctor),throwsA(contains('Unsupported operation')));
     });
     test("SimpleClass10 - abstract parent", () {
       var ctor = getObjectByPath("SimpleClass10") as JsFunction;

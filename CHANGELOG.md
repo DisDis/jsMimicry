@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1+2
+
+- upgrade analyzer: '>=0.23.0 <0.27.0'
+
 ## 0.2.1+1
 
 - Fix: JsTransform for optional and named param
