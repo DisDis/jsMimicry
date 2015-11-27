@@ -17,12 +17,6 @@ class InjectJsProxyInitVisitor extends GeneralizingAstVisitor {
   InjectJsProxyInitVisitor(this.code);
   @override
   visitMethodInvocation(MethodInvocation node) {
-    //TODO: detect '${DartClassInfo.JsProxyFactory_CLASS}.init()';
-//    if (node.methodName.toString() == "useGeneratedCode") {
-//      var arg0 = node.argumentList.arguments[0];
-//      code.edit(arg0.offset, arg0.offset, 'initSmoke()..addAll(');
-//      code.edit(arg0.end, arg0.end, ')');
-//    }
     return super.visitMethodInvocation(node);
   }
 }
@@ -34,7 +28,7 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
 
   final List<String> libraries = ['test'];
   JsMimicryResolverTransformer.asPlugin(this.settings) {
-    resolvers = new Resolvers(dartSdkDirectory);
+    resolvers = new Resolvers.fromMock(mockSdkSources);
   }
 
   Future<bool> _injectJsProxyConfig(Transform transform) async {

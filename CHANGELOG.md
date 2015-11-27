@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1+3
+
+- reduced memory consumption
+
 ## 0.2.1+2
 
 - upgrade analyzer: '>=0.23.0 <0.27.0'
