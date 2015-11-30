@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1+4
+
+- fix analyzer: '>=0.23.0 <0.26.1+15'
+
 ## 0.2.1+3
 
 - reduced memory consumption
