@@ -99,7 +99,7 @@ class GeneratorJsMimicry {
   }
 
   void phase1(ClassElement clazz) {
-    ClassDeclaration node = clazz.node;
+    ClassDeclaration node = clazz.computeNode();
     var collector = new CollectorVisitor(this);
     node.accept(collector);
 //    var dci = new DartClassInfo(annotation, node, this);
@@ -108,7 +108,7 @@ class GeneratorJsMimicry {
 
   DartMethodMetadata getMethodMetadata(Identifier v) {
     var m = v.staticElement;
-    Declaration mnode = m.node;
+    Declaration mnode = m.computeNode();
     DartMethodMetadata methodMetadata;
     if (mnode is MethodDeclaration && mnode.isStatic) {
       ClassDeclaration clazz = mnode.parent;

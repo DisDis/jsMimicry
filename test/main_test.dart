@@ -138,7 +138,7 @@ initTest() {
 
     test("SimpleClass9Abstract - abstract class", () {
       var ctor = getObjectByPath("SimpleClass9Abstract") as JsFunction;
-      expect(()=> new JsObject(ctor),throwsA(contains('Unsupported operation')));
+      expect((){ new JsObject(ctor);},throwsA(anything));
     });
     test("SimpleClass10 - abstract parent", () {
       var ctor = getObjectByPath("SimpleClass10") as JsFunction;

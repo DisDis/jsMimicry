@@ -28,7 +28,7 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
 
   final List<String> libraries = ['test'];
   JsMimicryResolverTransformer.asPlugin(this.settings) {
-    resolvers = new Resolvers.fromMock(mockSdkSources);
+    resolvers = new Resolvers.fromMock(mockSdkSources, useSharedSources: true);
   }
 
   Future<bool> _injectJsProxyConfig(Transform transform) async {
