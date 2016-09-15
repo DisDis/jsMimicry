@@ -1,5 +1,5 @@
 name: js_mimicry
-version: 0.2.2
+version: 0.2.3
 author: Igor Demyanov <igor.demyanov@gmail.com>
 description: |-
   Allows the use of Dart classes and objects in javascript.
@@ -19,7 +19,7 @@ dev_dependencies:
   barback: any
   browser: any
 transformers:
- - js_mimicry
+# - js_mimicry
 # - dom_stub
  - test/pub_serve:
     $include: test/**_test{.*,}.dart

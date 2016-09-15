@@ -4,7 +4,8 @@ library jsMimicry.annotation;
  * Indicator from proxy
  */
 class JsProxy {
-  const JsProxy([String path]);
+  final String path;
+  const JsProxy([String this.path]);
 }
 
 /**

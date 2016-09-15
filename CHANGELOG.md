@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+- disable js_mimicry transformer
+
 ## 0.2.2
 - useSharedSources mode enabled in the resolver
 - fix analyzer: '>=0.23.0 <0.26.1+15'
