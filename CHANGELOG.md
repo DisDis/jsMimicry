@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- upgrade code_transformers: ^0.5.0
+
 ## 0.2.3
 
 - disable js_mimicry transformer

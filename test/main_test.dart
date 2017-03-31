@@ -1,12 +1,12 @@
 @TestOn("vm||dartium")
 library jsMimicry.test;
 
-import "dart:async";
 import 'dart:js';
 
 import "package:test/test.dart";
-import "package:js_mimicry/annotation.dart";
+import 'package:js_mimicry/annotation.dart';
 import "package:js_mimicry/test/test_lib1.dart";
+import 'main_test.js.g.dart';
 
 const String DART_OBJ_KEY = "_dartObj";
 
@@ -18,7 +18,6 @@ JsObject getObjectByPath(String path) {
 }
 
 initTest() {
-
   group("Simple", () {
     test("SimpleClass1", () {
       var link = getObjectByPath("SimpleClass1");
@@ -224,6 +223,8 @@ initTest() {
 }
 
 main() {
+  jsProxyBootstrap();
   context["dart"] = new JsObject.jsify({});
   initTest();
+  JsProxyFactory.init();
 }

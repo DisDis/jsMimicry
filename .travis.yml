@@ -1,0 +1,8 @@
+language: dart
+dart: stable
+sudo: false
+
+notifications:
+ email: false
+
+script: pub run test -p dartium

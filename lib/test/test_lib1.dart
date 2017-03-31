@@ -83,7 +83,7 @@ class SimpleClass10 extends SimpleClass9Abstract {
 
 
 @JsProxy()
-class GenericClass1<T> extends SimpleClass5 {
+class GenericClass1<T extends String> extends SimpleClass5 {
    T field1 = "GenericClass1_field1";
 }
 

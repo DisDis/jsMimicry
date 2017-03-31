@@ -4,9 +4,8 @@ import 'dart:async';
 import 'package:barback/barback.dart';
 import 'package:code_transformers/resolver.dart';
 import 'package:code_transformers/src/dart_sdk.dart';
-import 'package:analyzer/src/generated/element.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/analyzer.dart';
-import 'package:analyzer/src/generated/ast.dart';
 import 'package:js_mimicry/generator.dart';
 import 'package:source_maps/refactor.dart';
 import 'package:source_span/src/file.dart';
@@ -28,7 +27,7 @@ class JsMimicryResolverTransformer extends Transformer with ResolverTransformer 
 
   final List<String> libraries = ['test'];
   JsMimicryResolverTransformer.asPlugin(this.settings) {
-    resolvers = new Resolvers.fromMock(mockSdkSources, useSharedSources: true);
+    resolvers = new Resolvers.fromMock(mockSdkSources);
   }
 
   Future<bool> _injectJsProxyConfig(Transform transform) async {

@@ -1,0 +1,31 @@
+name: wrike_ws_generate
+version: 1.0.0
+publish_to: http://pub-dev.wrke.in/
+homepage: https://www.wrike.com
+description: JS Mimicry Generator for WS
+
+environment:
+  sdk: ">=1.13.0 <2.0.0"
+
+dependencies:
+  crypto: '^2.0.0'
+  js_mimicry:
+    path: ../../
+  package_resolver: 1.0.2
+  build: '^0.3.0'
+  # right now we can not use higher versions of source gen
+  # https://www.wrike.com/open.htm?id=129192635
+  source_gen: 0.5.2
+
+dependency_overrides:
+  dart_style: 0.2.1
+  crypto: "^2.0.0"
+  analyzer: '^0.27.1'
+  code_transformers: '^0.4.1'
+  logging: any
+  # We override yaml package because we have reference to throttle_debounce 0.1.2 and this package has invalid
+  # pubspec.yaml (homepage attribute is duplicated). In yaml 2.1.12 such errors in pubspec are critical.
+  yaml: '2.1.11'
+
+transformers:
+- js_mimicry
