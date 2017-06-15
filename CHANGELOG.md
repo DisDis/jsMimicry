@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Dart 1.24, strong mode workaround
+
 ## 1.0.0
 
 - upgrade code_transformers: ^0.5.0

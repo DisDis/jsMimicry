@@ -83,8 +83,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass1.'
 context[r"SimpleClass1"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass1");
     var _obj_ = new I0_.SimpleClass1();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
   });
@@ -137,8 +137,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass2WithNS.'
 context[r"SimpleClass2WithNS"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:dart.SimpleClass2WithNS");
     var _obj_ = new I0_.SimpleClass2WithNS();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
   });
@@ -191,8 +191,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass3.'
 context[r"SimpleClass3"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass3");
     var _obj_ = new I0_.SimpleClass3();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
   });
@@ -257,24 +257,21 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass4.'
 context[r"SimpleClass4"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass4");
     var _obj_ = new I0_.SimpleClass4();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
   });
 //    constructor 'SimpleClass4.public1'
 context[r"SimpleClass4_public1"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass4_public1");
     var _obj_ = new I0_.SimpleClass4.public1();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
   });
 //    constructor 'SimpleClass4._internal'
 context[r"SimpleClass4__internal"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass4__internal");
-    var _obj_ = new I0_.SimpleClass4._internal();
-    _obj_.JS_INSTANCE_PROXY = that;
-    that[r"_dartObj"] = _obj_;
+   throw new UnsupportedError("Private constructor 'SimpleClass4._internal'");
   });
 // Methods
 var proto = context[r"SimpleClass4"]["prototype"];
@@ -327,8 +324,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass5.'
 context[r"SimpleClass5"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass5");
     var _obj_ = new I0_.SimpleClass5();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
   });
@@ -428,8 +425,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass6.'
 context[r"SimpleClass6"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass6");
     var _obj_ = new I0_.SimpleClass6();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
 // Call parent ctor 'SimpleClass5'
@@ -517,8 +514,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass8.'
 context[r"SimpleClass8"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass8");
     var _obj_ = new I0_.SimpleClass8();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
 // Call parent ctor 'SimpleClass3'
@@ -582,8 +579,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass11.'
 context[r"SimpleClass11"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass11");
     var _obj_ = new I0_.SimpleClass11();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
   });
@@ -637,7 +634,6 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass9Abstract.'
 context[r"SimpleClass9Abstract"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass9Abstract");
    throw new UnsupportedError("Abstract class 'SimpleClass9Abstract'");
   });
 var F = new js.JsFunction.withThis((that){});
@@ -701,8 +697,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'SimpleClass10.'
 context[r"SimpleClass10"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:SimpleClass10");
     var _obj_ = new I0_.SimpleClass10();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
 // Call parent ctor 'SimpleClass9Abstract'
@@ -770,8 +766,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'GenericClass1.'
 context[r"GenericClass1"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:GenericClass1");
     var _obj_ = new I0_.GenericClass1();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
 // Call parent ctor 'SimpleClass5'
@@ -848,8 +844,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'GenericClass2.'
 context[r"GenericClass2"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:GenericClass2");
     var _obj_ = new I0_.GenericClass2();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
 // Call parent ctor 'GenericClass1'
@@ -925,8 +921,8 @@ __prototypeReg = true;
 // Constructors
 //    constructor 'JsTransformClass1.'
 context[r"JsTransformClass1"] = new js.JsFunction.withThis((that) {
-//print(r"ctr:JsTransformClass1");
     var _obj_ = new I0_.JsTransformClass1();
+    // ignore: undefined_setter
     _obj_.JS_INSTANCE_PROXY = that;
     that[r"_dartObj"] = _obj_;
   });

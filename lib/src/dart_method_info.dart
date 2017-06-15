@@ -87,11 +87,15 @@ class DartMethodInfo {
     sb.writeln(
         """context[r"${nameFunction}${postFixName}"] = new js.JsFunction.withThis((that$sbParamsWithType) {""");
     _generateParamTransforms(sb);
-    sb.writeln("""//print(r"ctr:${dci.clazz.jsPath}${postFixName}");""");
+    var constructorName = name == null ? '' : '.$name';
+    if (name!=null && name.indexOf("_") == 0 ) {
+      sb.writeln("""   throw new UnsupportedError("Private constructor '${dci.clazz.dartClassName}${constructorName}'");""");
+    } else
     if (dci.isAbstract) {
       sb.writeln("""   throw new UnsupportedError("Abstract class '${dci.clazz.dartClassName}'");""");
     }else{
-      sb.writeln("""    var _obj_ = new ${dci.clazz.importDartClassName}${name == null ? '' : '.$name'}($sbParams);""");
+      sb.writeln("""    var _obj_ = new ${dci.clazz.importDartClassName}${constructorName}($sbParams);""");
+      sb.writeln("""    // ignore: undefined_setter""");
       sb.writeln("""    _obj_.JS_INSTANCE_PROXY = that;""");
       sb.writeln("""    that[r"${DartClassInfo.DART_OBJ_KEY}"] = _obj_;$parentCall""");
     }
