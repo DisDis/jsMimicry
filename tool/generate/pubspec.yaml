@@ -1,8 +1,6 @@
-name: wrike_ws_generate
+name: js_mimicry_generate
 version: 1.0.0
-publish_to: http://pub-dev.wrke.in/
-homepage: https://www.wrike.com
-description: JS Mimicry Generator for WS
+description: JS Mimicry Generator
 
 environment:
   sdk: ">=1.13.0 <2.0.0"
@@ -27,5 +25,3 @@ dependency_overrides:
   # pubspec.yaml (homepage attribute is duplicated). In yaml 2.1.12 such errors in pubspec are critical.
   yaml: '2.1.11'
 
-transformers:
-- js_mimicry
