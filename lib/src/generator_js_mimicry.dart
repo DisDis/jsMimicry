@@ -19,7 +19,7 @@ class GeneratorJsMimicry {
   }
 
   static ElementAnnotation getAnnotationFromElement(Element clazz) {
-    return clazz.metadata.firstWhere((ElementAnnotation item) => item.element.enclosingElement.displayName == DartClassInfo.ANNOTATION_CLASS, orElse:() => null);
+    return clazz.metadata.firstWhere((ElementAnnotation item) => item.element?.enclosingElement?.displayName == DartClassInfo.ANNOTATION_CLASS, orElse:() => null);
   }
 
   static Annotation getAnnotation(ClassDeclaration node) {
