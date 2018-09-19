@@ -1,11 +1,14 @@
 library jsMimicry.generator;
 
 import 'package:analyzer/analyzer.dart';
+import 'package:build/build.dart';
 import 'package:analyzer/src/generated/ast.dart';
-import 'package:barback/src/asset/asset_id.dart';
-import 'package:code_transformers/src/resolver.dart';
 import 'package:analyzer/src/generated/element.dart';
+import 'src/type_provider_helper.dart';
 
+import 'src/mimicry_resolver.dart';
+
+export 'src/mimicry_resolver.dart';
 part 'src/generator_js_mimicry.dart';
 part 'src/dart_method_info.dart';
 part 'src/dart_class_info.dart';

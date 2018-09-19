@@ -4,9 +4,13 @@
 
 import 'dart:async';
 
-import 'package:build/build.dart';
+import 'package:build_config/build_config.dart';
 import 'package:wrike_ws_generate/jsmimicry_generator.dart';
 import 'package:source_gen/source_gen.dart';
+import 'package:build_runner_core/build_runner_core.dart';
+import 'package:build_runner/build_runner.dart';
+
+// ignore_for_file: comment_references
 
 /// Example of how to use source_gen with [BuiltJsonGenerator].
 ///
@@ -17,15 +21,15 @@ import 'package:source_gen/source_gen.dart';
 /// Import the generators you want and pass them to [build] as shown,
 /// specifying which files in which packages you want to run against.
 Future main(List<String> args) async {
-  var phases = new PhaseGroup();
-  phases.newPhase().addAction(
-      new GeneratorBuilder([
-        new JsMimicryGenerator()
-      ], generatedExtension: '.js.g.dart'),
-      new InputSet('js_mimicry', const [
+  var actions = apply('mimicry_generator',
+      [(_) => new LibraryBuilder(new JsMimicryGenerator(), generatedExtension: '.js.g.dart')],
+      toRoot(),
+      defaultGenerateFor: const InputSet(include: const <String>[
         'lib/**.dart',
         'test/**.dart'
-      ]));
+      ]),
+      hideOutput: false
+  );
 
-  await build(phases, deleteFilesByDefault: true);
+  await build([actions], deleteFilesByDefault: true);
 }

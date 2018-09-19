@@ -5,7 +5,7 @@ rm -rf ./.dart_tool/build
 
 # avoiding build errors
 cd tool/generate
-pub get --packages-dir
+pub get
 cd ../../
 
 dart ./tool/generate/tool/js_resolver_build.dart
