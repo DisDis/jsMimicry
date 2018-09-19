@@ -3,13 +3,13 @@ library jsMimicry.test.lib1;
 import 'package:js_mimicry/annotation.dart';
 
 @JsProxy()
-class SimpleClass1 {}
+class SimpleClass1 extends Object with JsProxyMixin {}
 
 @JsProxy('dart.SimpleClass2WithNS')
-class SimpleClass2WithNS {}
+class SimpleClass2WithNS extends Object with JsProxyMixin {}
 
 @JsProxy()
-class SimpleClass3 {
+class SimpleClass3 extends Object with JsProxyMixin {
   String method1woArgs() => "method1woArgs_TEST_RESULT_SimpleClass3";
   String method2woArgs() {
     return "method2woArgs_TEST_RESULT_SimpleClass3";
@@ -19,14 +19,14 @@ class SimpleClass3 {
 }
 
 @JsProxy()
-class SimpleClass4 {
+class SimpleClass4 extends Object with JsProxyMixin {
   SimpleClass4();
   SimpleClass4.public1();
   SimpleClass4._internal();
 }
 
 @JsProxy()
-class SimpleClass5 {
+class SimpleClass5 extends Object with JsProxyMixin {
   String get propertyString1ReadOnly => "SimpleClass5_propertyString1ReadOnly";
   int get propertyInt1ReadOnly => 41;
 
@@ -60,7 +60,7 @@ class SimpleClass8 extends SimpleClass7SkipJsProxy{
 }
 
 @JsProxy()
-class SimpleClass11{
+class SimpleClass11 extends Object with JsProxyMixin {
   @JsIgnore()
   ignoreMethod1()=>"ignoreMethod1";
   @JsIgnore()
@@ -84,7 +84,7 @@ class SimpleClass10 extends SimpleClass9Abstract {
 
 @JsProxy()
 class GenericClass1<T extends String> extends SimpleClass5 {
-   T field1 = "GenericClass1_field1";
+   T field1 = 'GenericClass1_field1' as T;
 }
 
 @JsProxy()
@@ -93,7 +93,7 @@ class GenericClass2 extends GenericClass1<String> {
 }
 
 @JsProxy()
-class JsTransformClass1 {
+class JsTransformClass1 extends Object with JsProxyMixin {
   static String ANY_TO_STRING1(v)=>v!=null?"$v":null;
   static String ANY_TO_STRING2(v)=>v!=null?"$v":null;
   static String ANY_TO_STRING3(v)=>v!=null?"$v":null;
