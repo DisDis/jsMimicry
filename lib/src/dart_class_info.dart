@@ -34,7 +34,9 @@ class DartClassInfo {
   static const String JS_INSTANCE_PROXY = 'JS_INSTANCE_PROXY';
   static const String NAME_PROXY_FACTORY = 'JsProxyFactory';
 
-  static const String NAME_IMPORT_ANNOTATION_PREFIX = "jsProxy";
+  static const String NAME_IMPORT_ANNOTATION_PREFIX = "jsproxy";
+  static const String NAME_SPACE_DART_JS = "js";
+  static const String NAME_SPACE_DART_HTML = "html";
   final GeneratorJsMimicry generator;
 
   _searchJsProxyParent(ClassElement element) {
@@ -58,7 +60,7 @@ class DartClassInfo {
     if (annotation != null) {
       var args = annotation.arguments;
       if (args != null && args.arguments.length != 0) {
-        clazz.jsPath = args.arguments[0].value;
+        clazz.jsPath = (args.arguments[0] as SimpleStringLiteral).value;
         clazz.className = clazz.jsPath.split(".").last;
       } else {
         clazz.jsPath = node.name.toString();
@@ -83,7 +85,7 @@ class DartClassInfo {
   void parsingConstructors(ClassDeclaration node) {
     node.members
         .where((item) => item is ConstructorDeclaration)
-        .forEach((ConstructorDeclaration classMember) {
+        .forEach((ClassMember classMember) {
       var tmp = new DartMethodInfo.fromConstructor(classMember, generator);
       constructors.add(tmp);
     });
@@ -116,9 +118,9 @@ class DartClassInfo {
       parentCall.writeln("// Call parent ctor '${parentClass}'");
       parentCallInt.writeln("// Call parent ctor '${parentClass}'");
       parentCall.writeln(
-          '''${contextParent}[r"${parentClass}_int"].callMethod('call',[that,_obj_]);''');
+          '''${contextParent}[r'${parentClass}_int'].callMethod('call',<dynamic>[that,_obj_]);''');
       parentCallInt.writeln(
-          '''${contextParent}[r"${parentClass}_int"].callMethod('call',[that,_obj_]);''');
+          '''${contextParent}[r'${parentClass}_int'].callMethod('call',<dynamic>[that,_obj_]);''');
     }
 
     sb.writeln("");
@@ -133,36 +135,36 @@ class DartClassInfo {
           """${superClazz.dartProxyClass}.$NAME_REG_PROTOTYPE_METHOD();""");
     }
     sb.writeln("""$NAME_PROTOTYPE_FLAG = true;
-     var context = ${contextB};""");
+     final dynamic context = ${contextB};""");
     sb.writeln("""// Constructors""");
     _generatePrototypeConstructors(sb, parentCall);
     if (superClazz != null && superClazz.jsPath != null) {
-      sb.writeln("""var F = new js.JsFunction.withThis((that){});
-F["prototype"]=${contextParent}[r"${parentClass}"]["prototype"];
-context[r"${nameFunction}"]["prototype"] = new js.JsObject(F);
-context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFunction}"];
+      sb.writeln("""var F = new js.JsFunction.withThis((dynamic that){});
+F['prototype']=${contextParent}[r'${parentClass}']['prototype'];
+context[r'${nameFunction}']['prototype'] = new js.JsObject(F);
+context[r'${nameFunction}']['prototype']['constructor'] = context[r'${nameFunction}'];
 """);
     }
     sb.writeln("""// Methods""");
-    sb.writeln("""var proto = context[r"${nameFunction}"]["prototype"];""");
+    sb.writeln("""dynamic proto = context[r'${nameFunction}']['prototype'];""");
     methods.forEach((v) {
       v.getMethodCode(sb, clazz);
     });
     sb.writeln("""// Constructor for method toJs""");
     sb.writeln(
-        """context[r"${nameFunction}_int"] = new js.JsFunction.withThis((that, _obj_) {
-      //print(r"ctr:${clazz.jsPath}_int");
+        """context[r'${nameFunction}_int'] = new js.JsFunction.withThis((dynamic that, dynamic _obj_) {
+      //print(r'ctr:${clazz.jsPath}_int');
       that[r"${DART_OBJ_KEY}"] = _obj_;$parentCallInt
     });""");
     sb.writeln("""// Constructors connect to prototype""");
     constructors.forEach((ctr) {
       if (ctr.name != null) {
         sb.writeln(
-            """context[r"${nameFunction}_${ctr.name}"]["prototype"] = proto;""");
+            """context[r'${nameFunction}_${ctr.name}']['prototype'] = proto;""");
       }
     });
     sb.writeln("//   internal constructor");
-    sb.writeln('context[r"${nameFunction}_int"]["prototype"] = proto;');
+    sb.writeln("context[r'${nameFunction}_int']['prototype'] = proto;");
     sb.writeln("""// Properties""");
     properties.forEach((prop) => prop.getCode(sb, clazz));
     sb.writeln("    }" "");
@@ -171,7 +173,7 @@ context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFuncti
   void _generatePrototypeConstructors(
       StringBuffer sb, StringBuffer parentCall) {
     if (constructors.length == 0) {
-      new DartMethodInfo.empty(null).getConstructorCode(this,
+      new DartMethodInfo.empty(null, generator).getConstructorCode(this,
           sb, parentCall.toString());
     } else {
       constructors.forEach((ctr) {
@@ -190,19 +192,19 @@ context[r"${nameFunction}"]["prototype"]["constructor"] = context[r"${nameFuncti
     /* AUTO-GENERATED METHOD.  DO NOT MODIFY.*/""");
     sb.writeln("""
     $NAME_REG_PROTOTYPE_METHOD();
-    return new js.JsObject(${contextB}["${nameFunction}_int"], [obj]);}""");
+    return new js.JsObject(${contextB}['${nameFunction}_int'] as js.JsFunction, <dynamic>[obj]);}""");
   }
 
   void generateToDart(StringBuffer sb) {
     sb.writeln("");
-    sb.writeln("""static ${clazz.importDartClassName} $NAME_TO_DART_METHOD(obj){
+    sb.writeln("""static ${clazz.importDartClassName} $NAME_TO_DART_METHOD(dynamic obj){
     /* AUTO-GENERATED METHOD.  DO NOT MODIFY.*/""");
     sb.writeln("""if (obj==null){
  return null;
 }else if (obj is ${clazz.importDartClassName}){
  return obj;
 }else if (obj is js.JsObject){
- return obj[r"${DART_OBJ_KEY}"] as ${clazz.importDartClassName};
+ return obj[r'${DART_OBJ_KEY}'] as ${clazz.importDartClassName};
 } else{
  throw new Exception('Unknown \$obj');
 }

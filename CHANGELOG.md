@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+- Dart 2.0
+
 ## 1.0.1
 
 - Dart 1.24, strong mode workaround
