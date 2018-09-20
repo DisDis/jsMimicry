@@ -1,5 +1,5 @@
 language: dart
-dart: stable
+dart: 1.23.4
 sudo: false
 
 notifications:
