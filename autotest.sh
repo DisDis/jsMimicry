@@ -4,7 +4,7 @@
 # LINTER
 PUB_SERVE_PORT=8089
 # chrome,vm
-TEST_PLATFORM_TARGET=chrome
+TEST_PLATFORM_TARGET=dartium
 # EXPORT ENV
 #export DOM_STUB="true"
 export TEST_ROOT_PATH="./test/"
@@ -13,10 +13,20 @@ echo 'Kill pub'
 ps ax | grep "port $PUB_SERVE_PORT" | grep -v 'grep' | awk '{print $1}' | xargs -L1 -I {} kill -9 {}
 echo 'pub update'
 pub update
+#echo "Installing linter"
+#pub global activate linter
 
+pub serve --port $PUB_SERVE_PORT --no-force-poll >/dev/null &
+PID=$!
+echo "Run serve [PID:$PID]"
+echo "Runing LINTER"
+pub global run linter -s -q ./
+RESULT_LINT=$?
+sleep 5
 echo "Running test"
-#TEST
-pub run test -p $TEST_PLATFORM_TARGET
+#VM
+pub run test --pub-serve=$PUB_SERVE_PORT -p $TEST_PLATFORM_TARGET
 RESULT=$?
-echo "Result: test=$RESULT"
-exit $RESULT
+echo "Result: test=$RESULT linter=$RESULT_LINT"
+kill $PID || exit 1
+exit $RESULT || $RESULT_LINT

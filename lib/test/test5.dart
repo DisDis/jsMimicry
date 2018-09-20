@@ -1,7 +1,7 @@
 part of test;
 
 @JsProxy()
-class Test5 extends Object with JsProxyMixin{
+class Test5 extends Object{
   final int finalField;
   int field2;
   methodTest5(p1){
@@ -28,5 +28,5 @@ class Test5 extends Object with JsProxyMixin{
 @JsProxy()
 class Test6 extends Test5{
   Test6(int finalField) : super(finalField);
-
+  
 }

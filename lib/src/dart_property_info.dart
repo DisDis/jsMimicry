@@ -12,16 +12,16 @@ class DartPropertyInfo{
 
   void getCode(StringBuffer sb, JsClass clazz){
     sb.writeln("//    property '$name'");
-    sb.writeln("js.context['Object'].callMethod('defineProperty',<dynamic>[proto,'$name', new js.JsObject.jsify({");
+    sb.writeln("js.context['Object'].callMethod('defineProperty',[proto,'$name', new js.JsObject.jsify({");
     if (isWritable){
-      sb.writeln("""'set': new js.JsFunction.withThis((dynamic that, dynamic value) {
+      sb.writeln("""'set': new js.JsFunction.withThis((that, value) {
       value = _toDart(value);
       (that['${DartClassInfo.DART_OBJ_KEY}'] as ${clazz.importDartClassName}).${name} = value;
       }),""");
     }
-    sb.writeln("""'get': new js.JsFunction.withThis((dynamic that){
-    final dynamic result = ((that['${DartClassInfo.DART_OBJ_KEY}'] as ${clazz.importDartClassName}).${name});
-    return _toJs<dynamic>(result);
+    sb.writeln("""'get': new js.JsFunction.withThis((that){
+    var result = ((that['${DartClassInfo.DART_OBJ_KEY}'] as ${clazz.importDartClassName}).${name});
+    return _toJs(result);
     }),""");
 
     sb.writeln("'enumerable': true");

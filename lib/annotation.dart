@@ -65,34 +65,3 @@ abstract class JsProxyFactory{
     _registrationPrototype.clear();
   }
 }
-
-
-abstract class JsProxyMixin implements JsProxyContainer {
-  dynamic _JS_INSTANCE_PROXY;
-
-  @JsIgnore()
-  dynamic get JS_INSTANCE_PROXY {
-    if (_JS_INSTANCE_PROXY == null) {
-      _JS_INSTANCE_PROXY = JsProxyFactory.toJs(this);
-    }
-
-    return _JS_INSTANCE_PROXY;
-  }
-
-  @JsIgnore()
-  set JS_INSTANCE_PROXY(dynamic v) {
-    _JS_INSTANCE_PROXY = v;
-  }
-
-  @JsIgnore()
-  bool get hasJsInstance {
-    return _JS_INSTANCE_PROXY != null;
-  }
-
-  void detachJsInstance() {
-    if (_JS_INSTANCE_PROXY != null) {
-      _JS_INSTANCE_PROXY['_dartObj'] = null;
-      _JS_INSTANCE_PROXY = null;
-    }
-  }
-}

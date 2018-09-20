@@ -1,11 +1,11 @@
-@TestOn("browser")
+@TestOn("vm||dartium")
 library jsMimicry.test;
 
 import 'dart:js';
 
 import "package:test/test.dart";
 import 'package:js_mimicry/annotation.dart';
-import "samples/test_lib1.dart";
+import "package:js_mimicry/test/test_lib1.dart";
 import 'main_test.js.g.dart';
 
 const String DART_OBJ_KEY = "_dartObj";
