@@ -5,4 +5,4 @@ sudo: false
 notifications:
  email: false
 
-script: pub run test -p dartium
+script: pub run test -p chrome
