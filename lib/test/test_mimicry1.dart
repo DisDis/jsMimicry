@@ -1,8 +1,8 @@
 part of test;
 
 @JsProxy()
-class TestMimicry1 extends Object with JsProxyMixin {
-
+class TestMimicry1 {
+  
   var state1 = 0;
   var state2 = 0;
 
@@ -17,15 +17,15 @@ class TestMimicry1 extends Object with JsProxyMixin {
     this.state2 = p2;
     return "state: $state1,$p2";
   }
-
+  
   method3(p1,[int p2]) {
     print("TestMimicry1.method3 p1:$p1, p2:$p2");
    }
-
+  
   method4(p1,{int p2, String p3}) {
     print("TestMimicry1.method4 p1:$p1, p2:$p2, p3:$p3");
   }
-
+  
 
   methodWithoutParams() {
     print("TestMimicry1.methodWithoutParams");
@@ -34,7 +34,7 @@ class TestMimicry1 extends Object with JsProxyMixin {
     print("TestMimicry1._methodPrivate - ERROR");
     throw new Exception("Private method invisibled");
   }
-
+  
   static futureToCallbacks(Future result,js.JsFunction resultCb,[js.JsFunction errorCb]){
     if (errorCb!=null){
       result = result.catchError(
@@ -46,7 +46,7 @@ class TestMimicry1 extends Object with JsProxyMixin {
         );
     return result;
   }
-
+  
   @JsMutator(insertParams:const ["resultCb","errorCb"],result:TestMimicry1.futureToCallbacks)
   Future<int> methodLongWork1(int p1){
     Completer<int> c = new Completer();
@@ -57,7 +57,7 @@ class TestMimicry1 extends Object with JsProxyMixin {
     });
     return c.future;
   }
-
+  
   @JsMutator(insertParams:const ["resultCb","errorCb"],result:TestMimicry1.futureToCallbacks)
   Future<int> methodLongWork2(int p1){
       Completer<int> c = new Completer();
@@ -68,10 +68,10 @@ class TestMimicry1 extends Object with JsProxyMixin {
       });
       return c.future;
     }
-
+  
   String methodInputDartObject1(
                              //@JsTransform(JsProxyFactory.toDart[Test1])
-                             Test1 t1,
+                             Test1 t1, 
                              //@JsTransform(JsProxyFactory.toDart[Test2])
                              Test2 t2,@JsTransform(ANY_TO_INT1) int intP, String strP){
       return t1.method2(intP.toString(), strP).toString() + t2.method2(intP.toString(), strP).toString();

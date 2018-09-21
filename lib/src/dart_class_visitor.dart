@@ -14,7 +14,7 @@ class DartClassVisitor extends GeneralizingAstVisitor {
         }
         var argN = arg as NamedExpression;
         if (argN.name.label.toString() == "insertParams") {
-          var list = (argN.expression as ListLiteral).elements.cast<SimpleStringLiteral>();
+          var list = (argN.expression as ListLiteral).elements;
           dmm.insertParams =
               list.map((v) => v.value.toString()).toList(growable: false);
         }

@@ -10,7 +10,7 @@ part 'test3.dart';
 part 'test_mimicry1.dart';
 
 @JsProxy("dart.T1")
-class Test1 extends Object with JsProxyMixin {
+class Test1{
   method1(p1,p2){
     print("Test1.method1 $p1, $p2");
     return p1+p2;

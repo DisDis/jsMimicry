@@ -6,7 +6,7 @@ import 'dart:async';
 part 'test22.dart';
 
 @JsProxy("dart.T11")
-class Test11 extends Object with JsProxyMixin{
+class Test11{
   String name;
   String getName(){
     return name;
