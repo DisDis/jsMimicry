@@ -6,7 +6,7 @@ description: |-
   Generates a special proxy classes.
 homepage: https://github.com/DisDis/jsMimicry
 environment:
-  sdk: '>=1.14.0'
+  sdk: '>=2.0.0 <3.0.0'
 dependencies:
   path: '>=1.3.5 <2.0.0'
   build: ^0.12.7
