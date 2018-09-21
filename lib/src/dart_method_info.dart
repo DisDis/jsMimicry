@@ -9,7 +9,7 @@ class DartMethodParameterTransformer {
     String paramAccess;
     if (param.kind == ParameterKind.NAMED) {
       paramAccess =
-          """${DartMethodInfo.NAMED_PARAMETERS_NAME}[r'${param.name}']""";
+          """${DartMethodInfo.NAMED_PARAMETERS_NAME}[r"${param.name}"]""";
     } else {
       paramAccess = """${param.name}""";
     }
@@ -19,11 +19,10 @@ class DartMethodParameterTransformer {
 
 class DartMethodParameter {
   final String name;
-  final DartType type;
   final ParameterKind kind;
   final DartMethodParameterTransformer transformer;
   final bool isMutated;
-  DartMethodParameter(this.name, this.type, this.kind,
+  DartMethodParameter(this.name, this.kind,
       [this.transformer, this.isMutated = false]);
 
 
@@ -31,7 +30,7 @@ class DartMethodParameter {
     DartMethodParameterTransformer transformer;
     NodeList<Annotation> metadata;
     if (element is DefaultFormalParameter){
-      metadata = element.parameter.metadata;
+      metadata = (element as DefaultFormalParameter).parameter.metadata;
     }else if (element is NormalFormalParameter){
       metadata = element.metadata;
     }
@@ -43,7 +42,7 @@ class DartMethodParameter {
       if (annotation != null) {
         var args = annotation.arguments;
         if (args != null && args.arguments.length != 0) {
-          Identifier v = args.arguments[0];
+          SimpleIdentifier v = args.arguments[0];
           var methodMetadata = generator.getMethodMetadata(v);
           if (methodMetadata != null) {
             transformer = new DartMethodParameterTransformer(methodMetadata);
@@ -52,34 +51,23 @@ class DartMethodParameter {
       }
     }
     return new DartMethodParameter(
-        element.identifier.toString(), element.declaredElement.type, element.kind, transformer);
+        element.identifier.toString(), element.kind, transformer);
   }
 }
 
 class DartMethodInfo {
   final String name;
-  final DartType returnType;
   final List<DartMethodParameter> parameters;
-  final TypeProviderHelper typeProviderHelper;
-  final GeneratorJsMimicry generator;
   static const String NAMED_PARAMETERS_NAME = "_input_map_params";
   DartMethodMutator mutator;
-  DartMethodInfo.empty(String this.name, this.generator) :
-        this.parameters = const [],
-        this.returnType = null,
-        typeProviderHelper = generator.typeProviderHelper;
-
-  DartMethodInfo.fromConstructor(ConstructorDeclaration node,this.generator)
+  DartMethodInfo.empty(String this.name) : this.parameters = const [];
+  DartMethodInfo.fromConstructor(ConstructorDeclaration node,GeneratorJsMimicry generator)
       : this.name = node.name != null ? node.name.toString() : null,
-        this.parameters = _convertParameters(node.parameters.parameters,generator),
-        this.returnType = node.declaredElement.returnType,
-        this.typeProviderHelper = generator.typeProviderHelper {}
+        this.parameters = _convertParameters(node.parameters.parameters,generator) {}
 
-  DartMethodInfo(MethodDeclaration node,this.generator)
+  DartMethodInfo(MethodDeclaration node,GeneratorJsMimicry generator)
       : this.name = node.name.toString(),
-        this.returnType = node.declaredElement.returnType,
-        this.parameters = _convertParameters(node.parameters.parameters,generator),
-        this.typeProviderHelper = generator.typeProviderHelper  {}
+        this.parameters = _convertParameters(node.parameters.parameters,generator) {}
 
   static List<DartMethodParameter> _convertParameters(
       NodeList<FormalParameter> nodeList,GeneratorJsMimicry generator) {
@@ -97,7 +85,7 @@ class DartMethodInfo {
     String postFixName = name == null ? '' : '_$name';
     sb.writeln("//    constructor '${nameFunction}.${name == null ? '' : name}'");
     sb.writeln(
-        """context[r'${nameFunction}${postFixName}'] = new js.JsFunction.withThis((dynamic that$sbParamsWithType) {""");
+        """context[r"${nameFunction}${postFixName}"] = new js.JsFunction.withThis((that$sbParamsWithType) {""");
     _generateParamTransforms(sb);
     var constructorName = name == null ? '' : '.$name';
     if (name!=null && name.indexOf("_") == 0 ) {
@@ -106,10 +94,10 @@ class DartMethodInfo {
     if (dci.isAbstract) {
       sb.writeln("""   throw new UnsupportedError("Abstract class '${dci.clazz.dartClassName}'");""");
     }else{
-      sb.writeln("""    final dynamic _obj_ = new ${dci.clazz.importDartClassName}${constructorName}($sbParams);""");
+      sb.writeln("""    var _obj_ = new ${dci.clazz.importDartClassName}${constructorName}($sbParams);""");
       sb.writeln("""    // ignore: undefined_setter""");
       sb.writeln("""    _obj_.JS_INSTANCE_PROXY = that;""");
-      sb.writeln("""    that[r'${DartClassInfo.DART_OBJ_KEY}'] = _obj_;$parentCall""");
+      sb.writeln("""    that[r"${DartClassInfo.DART_OBJ_KEY}"] = _obj_;$parentCall""");
     }
     sb.writeln("""  });""");
   }
@@ -121,19 +109,14 @@ class DartMethodInfo {
     }
     sb.writeln("//   method '${name}'");
     sb.writeln(
-        """proto[r'${name}'] = new js.JsFunction.withThis((dynamic that$sbParamsWithType) {""");
-    if (parameters.any((p) => p.kind == ParameterKind.NAMED)) {
-      sb.writeln('''$NAMED_PARAMETERS_NAME = new Map<dynamic, dynamic>.from($NAMED_PARAMETERS_NAME);''');
-    }
+        """proto[r'${name}'] = new js.JsFunction.withThis((that$sbParamsWithType) {""");
     _generateParamTransforms(sb);
     var methodCall =
-        """((that['${DartClassInfo.DART_OBJ_KEY}'] as ${clazz.importDartClassName}).${name}($sbParams))""";
+        """((that["${DartClassInfo.DART_OBJ_KEY}"] as ${clazz.importDartClassName}).${name}($sbParams))""";
     if (mutator != null) {
       methodCall = mutator.changeResult(methodCall);
     }
-
-    final toJsCast = mutator != null || returnType.isDynamic ? 'dynamic' : (returnType.isVoid ? 'void' : null);
-    sb.write("""return _toJs${toJsCast != null ? '<$toJsCast>' : ''}($methodCall);"""); //end return
+    sb.write("""return _toJs($methodCall);""");//end return
     sb.writeln("});");
   }
 
@@ -160,15 +143,15 @@ class DartMethodInfo {
           isOptional = true;
           sbInputParams.write(',');
           sbInputParams.write("[");
-          sbInputParams.write('Map<dynamic, dynamic> $namedParam');
-          sbInputParams.write(" = const <dynamic, dynamic>{}");
+          sbInputParams.write(namedParam);
+          sbInputParams.write(" = const {}");
         } else {
           sbInputParams.write(',');
           if (!isOptional && param.kind.isOptional) {
             isOptional = true;
             sbInputParams.write("[");
           }
-          sbInputParams.write('dynamic ${param.name}');
+          sbInputParams.write(param.name);
         }
       }
       if (param.isMutated) {
@@ -177,22 +160,11 @@ class DartMethodInfo {
       if (!first) {
         sbParams.write(',');
       }
-
-      bool isIterable = typeProviderHelper.isIterableType(param.type);
-      bool isMap = typeProviderHelper.isMapType(param.type);
-      bool needCast = (isIterable || isMap) && (param.type is ParameterizedType)
-        && ((param.type as ParameterizedType).typeArguments.any((t) => !t.isDynamic));
-
       if (namedParam == null) {
-        sbParams.write(" ${needCast ? '(' : ''} _toDart(${param.name}) ");
+        sbParams.write(" _toDart(${param.name}) ");
       } else {
-        sbParams.write("${param.name} : ${needCast ? '(' : ''} _toDart(${namedParam}['${param.name}']) ");
+        sbParams.write("${param.name} : _toDart(${namedParam}['${param.name}']) ");
       }
-
-      if (needCast) {
-        sbParams.write(' )?.cast<${(param.type as ParameterizedType).typeArguments.map((t) => t.name).join(',')}>()');
-      }
-
       first = false;
     });
     if (isOptional) {
@@ -200,4 +172,3 @@ class DartMethodInfo {
     }
   }
 }
-

@@ -2,11 +2,10 @@ part of jsMimicry.generator;
 
 class GeneratorJsMimicry {
   Map<String, DartClassInfo> classInfo = {};
-  Map<AssetId, DartLibraryMetadata> importPrefix = {};
+  Map<AssetId, DartLibraryMetadata> _importPrefix = {};
   static const String NAME_jsProxyBootstrap = "jsProxyBootstrap";
-  final MimicryResolver resolver;
-  final TypeProviderHelper typeProviderHelper;
-  GeneratorJsMimicry(this.resolver, this.typeProviderHelper) {}
+  final Resolver resolver;
+  GeneratorJsMimicry(this.resolver) {}
 
   _superClassLink() {
     classInfo.forEach((className, info) {
@@ -33,18 +32,22 @@ class GeneratorJsMimicry {
     }
   }
 
-  DartLibraryMetadata addImport(AssetId classAssetId, {String forceNamespace}) {
-    return importPrefix.putIfAbsent(
-        classAssetId, () => new DartLibraryMetadata(classAssetId,forceNamespace != null ? forceNamespace : "I${_importPrefixIndex++}_"));
-  }
 
-  String generateProxyFile(/*, String outputFileName*/) {
+  generateProxyFile(StringBuffer sb /*, String outputFileName*/) {
     _superClassLink();
 
-    StringBuffer resultSb = new StringBuffer();
-
     //  outputFileName = path.normalize(path.absolute(path.dirname(outputFileName)));
-    StringBuffer sb = new StringBuffer();
+    sb.writeln("library jsProxy;");
+    sb.writeln(r"/* AUTO-GENERATED FILE.  DO NOT MODIFY.*/");
+    sb.writeln("");
+    sb.writeln("import 'dart:js' as js;");
+    sb.writeln(
+        "import 'package:js_mimicry/annotation.dart' as ${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX};");
+    sb.writeln("");
+    _importPrefix.forEach((importAssetId, library) {
+      sb.writeln(
+          "import '${library.import}' as ${library.importPrefix};");
+    });
 
     sb.writeln("");
     sb.writeln("//--------------------------");
@@ -59,7 +62,7 @@ class GeneratorJsMimicry {
     });
     sb.writeln("}");
 
-    sb.writeln("dynamic _toDart(dynamic value){");
+    sb.writeln("dynamic _toDart(value){");
     sb.writeln("""
     if (value != null && (value is js.JsObject) && value['${DartClassInfo.DART_OBJ_KEY}']!=null){
      return value['${DartClassInfo.DART_OBJ_KEY}'];
@@ -68,7 +71,7 @@ class GeneratorJsMimicry {
     """);
     sb.writeln("}");
 
-    sb.writeln("dynamic _toJs<T>(T value){");
+    sb.writeln("dynamic _toJs(value){");
     sb.writeln("""
     if (value is ${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX}.${DartClassInfo.NAME_JS_PROXY_INTERFACE}){
       return value.${DartClassInfo.JS_INSTANCE_PROXY};
@@ -85,42 +88,14 @@ class GeneratorJsMimicry {
       sb.writeln("//--------------------------");
       v.generateProxyClass(sb);
     });
-
-    resultSb.writeln("library jsproxy;");
-    resultSb.writeln(r"/* AUTO-GENERATED FILE.  DO NOT MODIFY.*/");
-    resultSb.writeln("");
-    resultSb.writeln("// ignore_for_file: library_prefixes");
-    resultSb.writeln("// ignore_for_file: non_constant_identifier_names");
-    resultSb.writeln("// ignore_for_file: argument_type_not_assignable");
-    resultSb.writeln("// ignore_for_file: invalid_assignment");
-    resultSb.writeln("");
-    resultSb.writeln("import 'dart:js' as ${DartClassInfo.NAME_SPACE_DART_JS};");
-    resultSb.writeln(
-        "import 'package:js_mimicry/annotation.dart' as ${DartClassInfo.NAME_IMPORT_ANNOTATION_PREFIX};");
-    resultSb.writeln("");
-    importPrefix.forEach((importAssetId, library) {
-      resultSb.writeln(
-          "import '${library.import}' as ${library.importPrefix};");
-    });
-
-    resultSb.write(sb.toString());
-
-    return resultSb.toString();
   }
 
   int _importPrefixIndex = 0;
 
-  DartLibraryMetadata addImportForDartType(DartType type) {
-    var library = type.element?.library;
-    if (library != null && !library.isInSdk) {
-      return genImportLibraryPrefix(library);
-    }
-    return null;
-  }
-
-  DartLibraryMetadata genImportLibraryPrefix(LibraryElement library, {String forceNamespace}) {
+  DartLibraryMetadata genImportLibraryPrefix(LibraryElement library) {
     var classAssetId = resolver.getSourceAssetId(library);
-    return addImport(classAssetId, forceNamespace: forceNamespace);
+    return _importPrefix.putIfAbsent(
+        classAssetId, () => new DartLibraryMetadata(classAssetId,"I${_importPrefixIndex++}_"));
   }
 
   void phase1(ClassElement clazz) {
