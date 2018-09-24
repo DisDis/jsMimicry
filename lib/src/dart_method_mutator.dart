@@ -12,7 +12,7 @@ class DartMethodMutator {
     List<DartMethodParameter> result = [];
     insertParams.forEach((iparam) {
       result.add(
-          new DartMethodParameter(iparam, ParameterKind.REQUIRED, null, true));
+          new DartMethodParameter(iparam, null, ParameterKind.REQUIRED, null, true));
     });
     result.addAll(parameters);
     return result;
